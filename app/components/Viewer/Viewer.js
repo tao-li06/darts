@@ -21,6 +21,16 @@ class Viewer extends Component {
   state = {
     load: STATE_NOT_LOADED,
     data: [],
+    columns: [
+      'Abundance Ratio: (Sample, 8) / (Control, 8)',
+      'Abundance Ratio: (Sample, 7) / (Control, 7)',
+      'Abundance Ratio: (Sample, 6) / (Control, 6)',
+      'Abundance Ratio: (Sample, 5) / (Control, 5)',
+      'Abundance Ratio: (Sample, 4) / (Control, 4)',
+      'Abundance Ratio: (Sample, 3) / (Control, 3)',
+      'Abundance Ratio: (Sample, 2) / (Control, 2)',
+      'Abundance Ratio: (Sample, 1) / (Control, 1)'
+    ]
   }
 
   openFile() {
@@ -31,11 +41,13 @@ class Viewer extends Component {
     this.setState({
       load: STATE_LOADING
     });
+    const { columns } = this.state;
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
-      const data = await retrieve(files[0]);
+      const data = await retrieve(files[0], Math.log10, columns);
+      console.log(data);
       this.setState({
-        data: [[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]],
+        data,
         load: STATE_LOADED
       });
     } catch (e) {

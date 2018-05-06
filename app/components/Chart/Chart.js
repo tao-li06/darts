@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { color } from '../../model/palette';
 
 class Chart extends Component {
   render() {
@@ -6,16 +7,22 @@ class Chart extends Component {
       cellW,
       cellH,
       data,
-      meter
+      indicatorColor:
+        [hue, lightness],
+      indicatorColor2: [h2, l2]
     } = this.props;
+    const {
+      max, min ,columns,items
+    } = data;
     return (
-      <svg width={cellW * data.length} height={cellH * data[0].length}>
+      <svg width={cellW * items.length} height={cellH * columns.length}>
         {
-          data.map((row, rowIndex) => {
-            return row.map((cell, cellIndex) => (
-              <g transform={`translate(${cellW * rowIndex}, ${cellH * cellIndex})`}>
-                <rect width={cellW} height={cellH} fill={meter.get(cell.value)}/>
-                <text alignmentBaseline="central" text-anchor="middle"  style={{fill: "rgb(128, 62, 51)"}}>{cell.text}</text>
+          items.map((row, rowIndex) => {
+            return row.map(([i, v]) => (
+              <g transform={`translate(${cellW * rowIndex}, ${cellH * i})`}>
+                <rect width={cellW} height={cellH} 
+                  fill={v > 0 ? color(hue, lightness, v / max) : color(h2, l2, v / min)}/>
+                {/* <text alignmentBaseline="central" text-anchor="middle"  style={{fill: "rgb(128, 62, 51)"}}>{v}</text> */}
               </g>
             ))
           })
@@ -28,9 +35,8 @@ class Chart extends Component {
 Chart.defaultProps = {
   cellW: 15,
   cellH: 60,
-  meter:  {
-    get: (v) => `rgb(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256})`
-  }
+  indicatorColor: [240, 50],
+  indicatorColor2: [0, 50],
 }
 
 export default Chart;
