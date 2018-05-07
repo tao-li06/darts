@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import retrieve from '../../model/record';
 import Chart from '../Chart';
 import Palette from '../Palette';
+import Pannel from './Pannel';
 
 const STATE_NOT_LOADED = 0;
 const STATE_LOADING = 1;
@@ -20,7 +21,6 @@ class Viewer extends Component {
 
   state = {
     load: STATE_NOT_LOADED,
-    data: [],
     columns: [
       'Abundance Ratio: (Sample, 8) / (Control, 8)',
       'Abundance Ratio: (Sample, 7) / (Control, 7)',
@@ -30,7 +30,19 @@ class Viewer extends Component {
       'Abundance Ratio: (Sample, 3) / (Control, 3)',
       'Abundance Ratio: (Sample, 2) / (Control, 2)',
       'Abundance Ratio: (Sample, 1) / (Control, 1)'
-    ]
+    ],
+    chartColumns: [
+      '(S8) / (C8)',
+      '(S7) / (C7)',
+      '(S6) / (C6)',
+      '(S5) / (C5)',
+      '(S4) / (C4)',
+      '(S3) / (C3)',
+      '(S2) / (C2)',
+      '(S1) / (C1)'
+    ],
+    groupby: 'Master Protein Accessions',
+    identifier: 'Positions in Master Proteins',
   }
 
   openFile() {
@@ -41,11 +53,11 @@ class Viewer extends Component {
     this.setState({
       load: STATE_LOADING
     });
-    const { columns } = this.state;
+    const { columns, groupby, identifier, chartColumns } = this.state;
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
-      const data = await retrieve(files[0], Math.log10, columns);
-      console.log(data);
+      const data = await retrieve(files[0], columns, groupby, identifier);
+      data.columns = chartColumns;
       this.setState({
         data,
         load: STATE_LOADED
@@ -65,28 +77,26 @@ class Viewer extends Component {
         <style jsx>{style}</style>
         {
           load == STATE_NOT_LOADED && (
-            <div className="view-pannel-container--unloaded">
-              <Well>Open the CSV file.</Well>
+            <div style={{height: "600px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+              <h4>Open the CSV file.</h4>
               <div type="file" className="btn btn-primary" onClick={this.openFile}>
                 <input type="file" style={{ display: "none" }} ref={(ele) => this.inputEle = ele} onChange={this.onFileLoaded} />
                 LOAD
-                            </div>
+              </div>
             </div>
           )
         }
         {
           load == STATE_LOADING && (
-            <div className="view-pannel-container--unloaded">
+            <div style={{height: "600px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+            
               <GridLoader color="green" />
             </div>
           )
         }
         {
           load == STATE_LOADED && (
-            <div className="view-pannel-container--unloaded">
-              <Palette steps={8} start={[49,130,189]}/>
-              <Chart data={data}/>
-             </div>
+            <Pannel data={data}/>
           )
         }
 

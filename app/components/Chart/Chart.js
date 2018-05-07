@@ -1,31 +1,58 @@
 import React, { Component } from 'react';
 import { color } from '../../model/palette';
+import { Overlay, Tooltip } from 'react-bootstrap';
 
 class Chart extends Component {
+  state = {
+    selectedRow: -1,
+    selectedColumn: -1
+  }
+
   render() {
     const {
+      nameW,
       cellW,
       cellH,
-      data,
-      indicatorColor:
-        [hue, lightness],
-      indicatorColor2: [h2, l2]
+      normalize,
+      max,
+      min,
+      data: { id, items },
+      columns,
+      color1: [h1, l1],
+      color2: [h2, l2]
     } = this.props;
-    const {
-      max, min ,columns,items
-    } = data;
     return (
-      <svg width={cellW * items.length} height={cellH * columns.length}>
+      <svg width={cellW * columns.length + nameW} height={cellH * (1 + items.length)}>
         {
-          items.map((row, rowIndex) => {
-            return row.map(([i, v]) => (
-              <g transform={`translate(${cellW * rowIndex}, ${cellH * i})`}>
-                <rect width={cellW} height={cellH} 
-                  fill={v > 0 ? color(hue, lightness, v / max) : color(h2, l2, v / min)}/>
-                {/* <text alignmentBaseline="central" text-anchor="middle"  style={{fill: "rgb(128, 62, 51)"}}>{v}</text> */}
-              </g>
-            ))
-          })
+          <g transform={`translate(0, 0)`}>
+            {
+              columns.map((column, index) => (
+                <text x={nameW + cellW * index + cellW / 2} y={cellH / 2} textAnchor="middle"  alignmentBaseline="central">{column.substring(0, 24)}</text>
+              ))
+            }
+          </g>
+        }
+        {
+          items.map((row, rowIndex) => (
+            <g transform={`translate(0, ${cellH * (rowIndex + 1)})`} height={cellH}>
+              {
+                <text x={nameW / 2} y = {cellH / 2 + 3} textAnchor="middle"  alignmentBaseline="central">{row.id}</text>
+              }
+              {
+                row.items.map(([i, v]) => {
+                  const value = normalize(v);
+                  const percent = (value >= max || value <= min) ? 1 : (value > 0) ? value / max : value / min;
+                  return (<g key={i} transform={`translate(${cellW * i + nameW}, 0)`} >
+                      <rect width={cellW} height={cellH}
+                        fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
+                      <text x={cellW / 2} y={cellH / 2} fontSize={12} textAnchor="middle" alignmentBaseline="central">{v}</text>
+                      
+                    </g>);
+                  }
+                )
+              }
+            </g>
+          ))
         }
       </svg>
     );
@@ -33,10 +60,14 @@ class Chart extends Component {
 }
 
 Chart.defaultProps = {
-  cellW: 15,
-  cellH: 60,
-  indicatorColor: [240, 50],
-  indicatorColor2: [0, 50],
+  nameW: 150,
+  cellW: 120,
+  cellH: 30,
+  normalize: (v) => Math.log2,
+  max: 2,
+  min: -2,
+  color1: [0, 50],
+  color2: [240, 50],
 }
 
 export default Chart;

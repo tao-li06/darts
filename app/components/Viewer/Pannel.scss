@@ -1,0 +1,15 @@
+.pannel {
+  display: flex;
+  flex-direction: column;
+
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+
+  &__title {
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 20px;
+  }
+}
