@@ -1,9 +1,9 @@
-FROM node:6.14.1
+FROM node:8.1.1
 
 RUN mkdir /workspace
 WORKDIR /workspace
 copy . /workspace
 ENV NODE_ENV production
-RUN npm install && npm run build
+RUN npm install
 EXPOSE 5000
-CMD npm run start
+CMD npm run dev
