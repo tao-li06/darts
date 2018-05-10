@@ -1,4 +1,4 @@
-FROM node:8.1.1
+FROM node:6.14.1
 
 RUN mkdir /workspace
 WORKDIR /workspace
