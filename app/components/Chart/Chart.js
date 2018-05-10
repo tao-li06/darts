@@ -93,7 +93,6 @@ class Chart extends Component {
             {
               data.map((row, rowIndex) => (
                 <g transform={`translate(${cellW * (rowIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
-                  
                   {
                     row.items.map(([i, v]) => {
                       const value = normalize(v);
