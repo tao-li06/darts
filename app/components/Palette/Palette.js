@@ -14,24 +14,24 @@ class Palette extends Component {
     } = this.props;
     const cells = [];
     
-    for (let step = 0; step < steps - 1; step++) {
+    for (let step = 0; step < steps; step++) {
       cells.push(
-        <g transform={`translate(${cellW * step}, 0)`}>
+        <g transform={`translate(0, ${cellH * (steps * 2 - step)})`}>
           <text x={cellW / 2} y = {cellH / 2} textAnchor="middle"  alignmentBaseline="central">{(min * (1 - step / steps)).toFixed(1)}</text>
-          <rect transform={`translate(0, ${cellH})`} width={cellW} height={cellH} fill={color(h2, l2, 1 - step / steps)} />
+          <rect transform={`translate(${cellW}, 0)`} width={cellW} height={cellH} fill={color(h2, l2, 1 - step / steps)} />
         </g>
       );
       cells.push(
-        <g transform={`translate(${cellW * (2 * steps - 2 - step)}, 0)`}>
+        <g transform={`translate(0, ${cellH * (step)})`}>
           <text x={cellW / 2} y = {cellH / 2} textAnchor="middle"  alignmentBaseline="central">{(max * (1 - step / steps)).toFixed(1)}</text>
-          <rect transform={`translate(0, ${cellH})`} width={cellW} height={cellH} fill={color(h1, l1, 1- step / steps)} />
+          <rect transform={`translate(${cellW}, 0)`} width={cellW} height={cellH} fill={color(h1, l1, 1- step / steps)} />
         </g>
       );
     }
     cells.push(
-      <g transform={`translate(${cellW * (steps - 1)}, 0)`}>
+      <g transform={`translate(0, ${cellH * (steps)})`}>
         <text x={cellW / 2} y = {cellH / 2} textAnchor="middle"  alignmentBaseline="central">{0}</text>
-        <rect transform={`translate(0, ${cellH})`} width={cellW} height={cellH} fill={color(h2, l2, 0)} />
+        <rect transform={`translate(${cellW}, 0)`} width={cellW} height={cellH} fill={color(h2, l2, 0)} />
       </g>
     );
     return cells;
@@ -48,12 +48,9 @@ class Palette extends Component {
       min
     } = this.props;
     return (
-      <div style={{marginTop: "50px", display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <div style={{marginBottom: "20px"}}>Color Meter (post normalization)</div>
-        <svg height={2 * cellH} width={steps * (2 * cellW + 1)}>
-          { this.getCells()}
-        </svg>
-      </div>
+      <svg height={(steps * 2 + 1 ) * cellH} width={2 * cellW}>
+        { this.getCells()}
+      </svg>
     );
   }
 }

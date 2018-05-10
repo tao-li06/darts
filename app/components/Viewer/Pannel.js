@@ -21,35 +21,51 @@ class Pannel extends Component {
 
   onKeyDown(e) {
     const { selected } = this.state;
-    const { data: { items } } = this.props
+    const { data: { orders } } = this.props
     if (e.keyCode == 37 && selected > 0) {
       this.setState({selected: selected - 1});
-    } else if (e.keyCode == 39 && selected < items.length - 1) {
+    } else if (e.keyCode == 39 && selected < orders.length - 1) {
       this.setState({selected: selected + 1});
     }
   }
 
+  componentDidMount() {
+    document.addEventListener("keydown", this.onKeyDown, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.onKeyDown, false);
+  }
+
   render() {
-    const { data } = this.props;
+    const { data, data: { orders, items, columns } } = this.props;
     const { selected, normalize, max, min, color1, color1: [h1, l1], color2, color2: [h2, l2] } = this.state;
     return (
-      <div className="pannel" onKeyDown={this.onKeyDown}>
+      <div className="pannel">
         <style jsx>{style}</style>
-        <ButtonToolbar style={{display: "flex", alignItems: "center"}}>
-          <h4>Narmalization:</h4>
+        {/* <ButtonToolbar style={{display: "flex", alignItems: "center"}}>
+          <h4>Normalization:</h4>
           <ToggleButtonGroup type="radio" defaultValue={1} name="normalization">
             <ToggleButton value={1} onClick={() => this.setState({normalize: Math.log2})}>lg2</ToggleButton>
             <ToggleButton value={2} onClick={() => this.setState({normalize: Math.log10})}>lg10</ToggleButton>
           </ToggleButtonGroup>
-        </ButtonToolbar>
-        <div className="pannel__content">
-          <Button bsSize="large" disabled={selected == 0 } onClick={() => this.setState({selected: selected - 1})}><Glyphicon glyph="chevron-left"></Glyphicon></Button>
-          <div style={{padding: "15px"}}>
-            <h1 className="pannel__title">{data.items[selected].group}</h1>
-            <Chart data={data.items[selected]} columns={data.columns} normalize={normalize} max={max} min={min} color1={color1} color2={color2}/>
-            <Palette color1={color1} color2={color2} steps={10} max={max} min={min}/>
+        </ButtonToolbar> */}
+        <div style={{display: "flex", flexDirection: "column", width: "80vw"}}>
+          <div style={{display: "flex", width: "100%"}}>
+            <Button bsSize="large" disabled={selected == 0 } onClick={() => this.setState({selected: selected - 1})}><Glyphicon glyph="chevron-left"></Glyphicon></Button>
+            <div style={{flex: "1"}}>
+            </div>
+            <Button bsSize="large" disabled={selected >= orders.length - 1} onClick={() => this.setState({selected: selected + 1})}><Glyphicon glyph="chevron-right"/></Button>
           </div>
-          <Button bsSize="large" disabled={selected >= data.items.length - 1} onClick={() => this.setState({selected: selected + 1})}><Glyphicon glyph="chevron-right"/></Button>
+          <div style={{padding: "0px", display: "flex", flexDirection: "column", alignItems: "flex-start", flex: "1"}}>
+            <h1 className="pannel__title">{orders[selected]}</h1>
+            <div style={{display: "flex", flexDirection: "row", width: "80vw"}}>
+              <Palette color1={color1} color2={color2} steps={10} max={max} min={min}/>
+              <Chart style={{width: "calc(100% - 80px)"}} data={items[orders[selected]]} columns={columns} normalize={normalize} max={max} min={min} color1={color1} color2={color2}/>
+              
+            </div>
+          </div>
+          
         </div>
       </div>);
    }
