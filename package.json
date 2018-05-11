@@ -4,20 +4,15 @@
   "description": "Visualize DARTS data",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "next",
     "dev-next": "next",
     "build": "next build",
-    "start": "NODE_ENV=production node index.js"
+    "start": "NODE_ENV=production next"
   },
   "author": "xiang.yin",
   "license": "ISC",
   "dependencies": {
-    "bookshelf": "^0.13.3",
     "classnames": "^2.2.5",
-    "express": "^4.16.3",
-    "knex": "^0.14.6",
-    "knex-schema-builder": "^0.3.6",
-    "mysql": "^2.15.0",
     "next": "^6.0.0",
     "papaparse": "^4.4.0",
     "react": "^16.3.2",
@@ -26,14 +21,10 @@
     "react-spinners": "^0.3.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.7.0",
-    "copyfiles": "^2.0.0",
     "node-sass": "^4.7.2",
     "sass-loader": "^7.0.1",
     "styled-jsx": "^2.2.1",
-    "styled-jsx-css-loader": "^0.3.0",
-    "styled-jsx-plugin-sass": "^0.2.2"
+    "styled-jsx-css-loader": "^0.3.0"
   }
 }
