@@ -1,7 +1,5 @@
 {
   "presets": [
-    [
-      "next/babel"
-    ]
+    "next/babel"
   ]
 }
