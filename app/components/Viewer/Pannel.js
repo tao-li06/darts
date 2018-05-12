@@ -4,6 +4,7 @@ import Palette from '../Palette';
 import ReactCardFlip from 'react-card-flip';
 import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, ToggleButton, Label } from 'react-bootstrap';
 import style from './Pannel.scss';
+import ProteinTitle from './PanelTitle';
 
 class Pannel extends Component {
   state= {
