@@ -19,11 +19,11 @@ class ProteinTitle extends Component {
     async updateInfo(props) {
       this.setState({ loaded: false });
       const { id } = props;
-      const info = await getProteinInfo(id);
+      const infos = await getProteinInfo(id);
       this.setState({
         loaded: true,
-        identifier: info.id,
-        fullName: info.protein.recommendedName.fullName.value
+        identifier: infos.map((info) => info.id).join('] ['),
+        fullName: infos.map((info) => info.protein.recommendedName.fullName.value).join('; ')
       });
     }
 
@@ -36,7 +36,7 @@ class ProteinTitle extends Component {
         );
       }
       return (
-        <h4>{id} ( {`${identifier} ${fullName} - ${persistedData.scores[id].toFixed(2)}` })</h4>
+        <h4>{id} ( {`[${identifier}]  ${fullName} - ${persistedData.scores[id].toFixed(2)}` })</h4>
       );
 
     }
