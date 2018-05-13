@@ -8,6 +8,7 @@ import style from './ExpReportCard.scss';
 import { connect } from 'react-redux';
 import { CircleLoader } from 'react-spinners';
 import { getExp } from '../../service/darts';
+import ProteinTitle from './PanelTitle';
 
 class ExpReportCard extends Component {
   state= {
@@ -147,7 +148,7 @@ class ExpReportCard extends Component {
               </Button>
             </div>
             <div className="ExpReportCard__content-container">
-              <a className="ExpReportCard__content-title" href={`https://www.uniprot.org/uniprot/${orders[selected]}`} target="_blank">{orders[selected]}</a>
+              <ProteinTitle className="ExpReportCard__content-title"  id={orders[selected]}/>
               <div style={{display: "flex", flexDirection: "row", width: "80vw"}}>
                 <Palette color1={color1} color2={color2} steps={5} max={max} min={min}/>
                 <Chart style={{width: "calc(100% - 120px)"}} data={items[orders[selected]]} columns={columns}
