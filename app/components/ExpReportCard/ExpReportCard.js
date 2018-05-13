@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { CircleLoader } from 'react-spinners';
 import { getExp } from '../../service/darts';
 import ProteinTitle from './PanelTitle';
+import { sort } from '../../model/record';
 
 class ExpReportCard extends Component {
   state= {
@@ -42,12 +43,12 @@ class ExpReportCard extends Component {
     document.addEventListener("keydown", this.onKeyDown, false);
     const { token, id } = this.props;
     const json = await getExp(token, id);
-    console.log(json);
+    const orders = sort(json.data);
     this.setState({
       data: {
         items: json.data,
         columns: json.headers,
-        orders: Object.keys(json.data)
+        orders
       },
       loaded: true
     });
@@ -122,7 +123,7 @@ class ExpReportCard extends Component {
                     for(let i = itemStart; i < itemsEnd; i++) {
                       children.push(
                         <ListGroupItem header={orders[i]} active={i === selected} onClick={() => this.setState({selected: i, showDetails: true})}>
-                          {'Some shit about the protein'}
+                          {'Description'}
                         </ListGroupItem>
                       )
                     }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 import { ScaleLoader } from 'react-spinners';
 import retrieve from '../../model/record';
 import style from './UploadModal.scss';
@@ -37,7 +37,6 @@ class UploadModal extends Component {
       ],
       groupby: 'Master Protein Accessions',
       identifier: 'Positions in Master Proteins',
-      name: "random",
     };
     this.openFile = this.openFile.bind(this);
     this.submit = this.submit.bind(this);
@@ -74,7 +73,7 @@ class UploadModal extends Component {
           data,
           load: STATE_LOADED
         });
-        this.props.onClose();
+        this.props.onClose(true);
       } else {
         this.setState({
           load: STATE_NOT_LOADED
@@ -92,7 +91,7 @@ class UploadModal extends Component {
 
   render() {
     const { show } = this.props;
-    const { load, fileName } = this.state;
+    const { load, fileName, name } = this.state;
     return  (
       <Modal show={show}>
         <style jsx global>{style}</style>
@@ -101,12 +100,22 @@ class UploadModal extends Component {
         </Modal.Header>
         <Modal.Body className="upload-modal">
           <div className="upload-modal__row">
-
+            <FormGroup
+              controlId="formUsername"
+            >
+              <ControlLabel>Experiment Name</ControlLabel>
+              <FormControl
+                type="text"
+                value={name}
+                placeholder="Enter The Experiment Name."
+                onChange={(e) => this.setState({ name: e.target.value})}
+              />
+            </FormGroup>
           </div>
           <div className="upload-modal__row">
             <div type="file" className="btn btn-primary" onClick={this.openFile}>
               <input type="file" style={{ display: "none" }} ref={(ele) => this.inputEle = ele} onChange={this.onFileSelected} />
-                Select
+                Select File
             </div>
             <div className="upload-modal__text">{fileName}</div>
           </div>

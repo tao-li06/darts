@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { getProteinInfo } from '../../service/uniprot';
+import { persistedData } from '../../model/record';
 
 class ProteinTitle extends Component {
     constructor(props) {
@@ -35,7 +36,7 @@ class ProteinTitle extends Component {
         );
       }
       return (
-        <h4>{id} ( {`${identifier} ${fullName}`} )</h4>
+        <h4>{id} ( {`${identifier} ${fullName} - ${persistedData.scores[id].toFixed(2)}` })</h4>
       );
 
     }
