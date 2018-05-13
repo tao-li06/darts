@@ -41,4 +41,66 @@ const retrieve = (file, columns = [], groupby, identifier) => {
   });
 }
 
+export const rankScore = (dataSet) => {
+  var score = 0.0;
+  var numOfTotalDP = 1.0;
+  var numOfValidDP = 0.0;
+  var numOfSubunits = 1.0;
+  const keys = Object.keys(dataSet);
+  for( var i  = 0; i < keys.length; i++) {
+    const seq = dataSet[keys[i]];
+    const ikeys = Object.keys(seq);
+    numOfSubunits ++;
+    for( var j  = 0; j < ikeys.length; j++) {
+      const value = seq[ikeys[j]];
+      const sign = value > 1 ? 1 : -1;
+      score += (Math.pow(Math.log(value), 1 ) * sign);
+      numOfTotalDP ++;
+      numOfValidDP += sign;
+    }
+  }
+  score *= Math.pow((Math.abs(numOfValidDP) / numOfTotalDP), 2);
+  score /= numOfSubunits;
+  if(Math.abs(numOfTotalDP) <= 3)
+    score = -1;
+  return score;
+}
+
+/**
+ * Given such data, return a sorted protein ids array.
+ * data: {
+        "Protein ID 1": {
+          "Seq 1": {
+            "1": 1.2,
+            "2": 3
+          },
+          "Seq 2": [],
+          ...
+        },
+        "Portein ID 2": {
+
+        },
+        ....
+      }
+ * @param {*} data 
+ */
+const persistedData = {};
+
+export const sort = (data) => {
+  const keys = Object.keys(data)
+  var length = keys.length;
+  var idList = [];
+  var scoreMap = {};
+  for (var i = 0; i < keys.length; i++) {
+    idList[i] = keys[i];
+    scoreMap[keys[i]] = rankScore(data[keys[i]]);
+  }
+  persistedData.scores = scoreMap;
+  return idList.sort((a,b) => scoreMap[b] - scoreMap[a]);
+}
+
+export {
+  persistedData
+}
+
 export default retrieve;

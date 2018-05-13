@@ -62,13 +62,13 @@ class Chart extends Component {
                       )
                     }
                     {
-                      <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{row.id}</Tooltip>}>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{rowIndex}</Tooltip>}>
                         <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length} 
                           transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{rowIndex > 
                           maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : rowIndex}
                         </text>
                       </OverlayTrigger>
-                  }
+                    }
                   </g>
                 );
               })
