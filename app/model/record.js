@@ -15,19 +15,20 @@ const retrieve = (file, columns = [], groupby, identifier) => {
           columnIndexes = columns.map((column) => row.indexOf(column));
           groupByIndex = row.indexOf(groupby);
           identifierIndex = row.indexOf(identifier);
-        } else if (row.length >= columns.length) {
+        } else if (row.length >= columns.length && row[groupByIndex] && row[identifierIndex]) {
           const groupName = row[groupByIndex];
           let group = result.items[groupName];
           if (!group) {
-            group = [];
+            group = {};
             result.items[groupName] = group;
           }
-          const records = columnIndexes.map((index, i) => [i, parseFloat(row[index])]).filter(arr => !!arr[1]);
-          group.push({
-            id: row[identifierIndex],
-            items: records
-          });
-          
+          const records = columnIndexes.reduce((obj, index, i) => {
+            if (!!row[index]) {
+              obj[i] = parseFloat(row[index]);
+            }
+            return obj;
+          }, {});
+          group[row[identifierIndex]] = records;
         }
       },
       complete: () => {

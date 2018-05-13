@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { color } from '../../model/palette';
-import { Overlay, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 class Chart extends Component {
   state = {
@@ -8,59 +8,10 @@ class Chart extends Component {
     selectedColumn: -1
   }
 
-  renderOld() {
-    const {
-      headerWidth,
-      cellW,
-      cellH,
-      normalize,
-      max,
-      min,
-      data: { id, data }, // data = [{ id: 'PN231', data: [[0, 1.2], [1, 2.3], [5, 7]]}, ...]
-      columns,  // ['(s1) / (c1)', ...]
-      color1: [h1, l1],
-      color2: [h2, l2]
-    } = this.props;
-    return (
-      <svg width={cellW * columns.length + headerWidth} height={cellH * (1 + data.length)}>
-        {
-          <g transform={`translate(0, 0)`}>
-            {
-              columns.map((column, index) => (
-                <text x={headerWidth + cellW * index + cellW / 2} y={cellH / 2} textAnchor="middle"  alignmentBaseline="central">{column.substring(0, 24)}</text>
-              ))
-            }
-          </g>
-        }
-        {
-          data.map((row, rowIndex) => (
-            <g transform={`translate(0, ${cellH * (rowIndex + 1)})`} height={cellH}>
-              {
-                <text x={headerWidth / 2} y = {cellH / 2 + 3} textAnchor="middle"  alignmentBaseline="central">{row.id}</text>
-              }
-              {
-                row.data.map(([i, v]) => {
-                  const value = normalize(v);
-                  const percent = (value >= max || value <= min) ? 1 : (value > 0) ? value / max : value / min;
-                  return (<g key={i} transform={`translate(${cellW * i + headerWidth}, 0)`} >
-                      <rect width={cellW} height={cellH}
-                        fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
-                      <text x={cellW / 2} y={cellH / 2} fontSize={12} textAnchor="middle" alignmentBaseline="central">{v}</text>
-                      
-                    </g>);
-                  }
-                )
-              }
-            </g>
-          ))
-        }
-      </svg>
-    );
-  }
-
   render() {
     const {
       headerWidth,
+      maxNameCharLength,
       nameFontSize,
       cellW,
       cellH,
@@ -73,10 +24,9 @@ class Chart extends Component {
       color2: [h2, l2],
       style
     } = this.props;
-    let nameHeight = 0;
-    for(let i = 0; i < data.length; i++) {
-      nameHeight = Math.max(nameHeight, data[i].id.length * nameFontSize * 0.52);
-    }
+    const nameHeight = maxNameCharLength * nameFontSize * 0.52;
+    const keys = Object.keys(data);
+    const len = keys.length;
     return (
       <div style={{display: "flex", ...style}}>
         <svg width={headerWidth} height={cellH * columns.length + nameHeight}>
@@ -89,28 +39,39 @@ class Chart extends Component {
           </g>
         </svg>
         <div style={{flex: "1", overflowX: "auto"}}>
-          <svg width={cellW * data.length} height={cellH * columns.length + nameHeight}>
+          <svg width={cellW * len} height={cellH * columns.length + nameHeight}>
             {
-              data.map((row, rowIndex) => (
-                <g transform={`translate(${cellW * (rowIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
-                  {
-                    row.items.map(([i, v]) => {
-                      const value = normalize(v);
-                      const percent = (value >= max || value <= min) ? 1 : (value > 0) ? value / max : value / min;
-                      return (<g key={i} transform={`translate(0, ${cellH * (i)})`} >
-                          <rect width={cellW} height={cellH}
-                            fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
-                          <text x={cellW / 2} y={cellH / 2} fontSize={12} textAnchor="middle" alignmentBaseline="central">{v}</text>
-                          
-                        </g>);
-                      }
-                    )
+              keys.map((rowIndex, rowItemIndex) => {
+                const row = data[rowIndex];
+                return (
+                  <g transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
+                    {
+                      Object.keys(row).map((i) => {
+                        const v = row[i];
+                        const value = normalize(v);
+                        const percent = (value >= max || value <= min) ? 1 : (value > 0) ? value / max : value / min;
+                        return (
+                          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{v}</Tooltip>}>
+                            <g key={i} transform={`translate(0, ${cellH * (i)})`} >
+                              <rect width={cellW} height={cellH}
+                                fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
+                              <text x={cellW / 2} y={cellH / 2} fontSize={12} textAnchor="middle" alignmentBaseline="central">{v}</text>
+                            </g>
+                          </OverlayTrigger>);
+                        }
+                      )
+                    }
+                    {
+                      <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{row.id}</Tooltip>}>
+                        <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length} 
+                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{rowIndex > 
+                          maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : rowIndex}
+                        </text>
+                      </OverlayTrigger>
                   }
-                  {
-                    <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length}  transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{row.id}</text>
-                  }
-                </g>
-              ))
+                  </g>
+                );
+              })
             }
           </svg>
         </div>
@@ -122,7 +83,7 @@ class Chart extends Component {
 
 Chart.defaultProps = {
   headerWidth: 150,
-  nameHeight: 600,
+  maxNameCharLength: 22,
   nameFontSize: 14,
   cellH: 30,
   cellW: 60,
