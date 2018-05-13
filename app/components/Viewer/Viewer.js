@@ -7,6 +7,8 @@ import retrieve from '../../model/record';
 import Chart from '../Chart';
 import Palette from '../Palette';
 import Pannel from './Pannel';
+import ReactCardFlip from 'react-card-flip';
+import ExpReportCard from '../ExpReportCard';
 
 const STATE_NOT_LOADED = 0;
 const STATE_LOADING = 1;
@@ -96,7 +98,7 @@ class Viewer extends Component {
         }
         {
           load == STATE_LOADED && (
-            <Pannel data={data}/>
+            <ExpReportCard data={data}/>
           )
         }
 

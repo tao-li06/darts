@@ -1,6 +1,12 @@
 .pannel {
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: rgb(231, 231, 231);
+  border-style: solid;
+  padding: 40px;
 
   &__content {
     display: flex;
@@ -16,4 +22,13 @@
     margin-bottom: 10px;
     width: 100%;
   }
+}
+
+:global(.react-card-flipper) {
+  width: 1200px;
+}
+
+:global(.react-card-back),
+:global(.react-card-front) {
+  background-color: white;
 }

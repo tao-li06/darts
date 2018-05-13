@@ -1,3 +1,3 @@
-import Page from '../app/pages';
+import Page from '../app/pages/login';
 
 export default Page;
