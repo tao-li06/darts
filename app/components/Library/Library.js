@@ -104,7 +104,7 @@ class Viewer extends Component {
 .library__list {
   width: 600px;
 }`}</style>
-        <div>
+        <div style={{paddingBottom: "40px"}}>
           <Button onClick={() => this.setState({show_upload_modal: true})}>Upload</Button>
         </div>
         <UploadModal show={show_upload_modal} onClose={(async (uploaded) => {
