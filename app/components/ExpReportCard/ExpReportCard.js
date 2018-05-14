@@ -9,8 +9,9 @@ import { CircleLoader } from 'react-spinners';
 import { getExp } from '../../service/darts';
 import ProteinTitle from './PanelTitle';
 import { sort } from '../../model/record';
+import css from 'styled-jsx/css';
 
-const style = `
+const style =css `
 .ExpReportCard {
 display: flex;
 flex-direction: column;
