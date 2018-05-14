@@ -132,7 +132,7 @@ class ExpReportCard extends Component {
     if (!loaded) {
       return (
         <div className="ExpReportCard">
-          <style jsx>{style}</style>
+          <style jsx global>{style}</style>
           <CircleLoader color="green"/>
         </div>
       );
