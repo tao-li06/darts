@@ -7,7 +7,7 @@ import Router from 'next/router';
 
 class DARTSView extends Component {
   componentWillMount() {
-    if(!this.props.loggedin) {
+    if(!this.props.loggedin && global.window) {
       Router.push("/");
     }
   }
