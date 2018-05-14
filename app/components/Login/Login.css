@@ -1,0 +1,22 @@
+.login {
+  width: 400px;
+  height: 360px;
+  background-color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+
+  
+}
+
+.login__brand {
+  width: 150px;
+  height: 50px;
+  font-size: 32px;
+}
+
+.login__submit {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}

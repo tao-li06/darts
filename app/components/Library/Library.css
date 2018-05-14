@@ -4,9 +4,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  //justify-content: center;
+  
+}
 
-  &__list {
-    width: 600px;
-  }
+.library__list {
+  width: 600px;
 }

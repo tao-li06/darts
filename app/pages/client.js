@@ -4,9 +4,9 @@ import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup,
 import { getExpList } from '../../service/darts';
 import { GridLoader } from 'react-spinners';
 import { connect } from 'react-redux';
+import style from './Library.scss';
 import UploadModal from './UploadModal';
 import ExpReportCard from '../ExpReportCard';
-import "isomorphic-fetch";
 
 class Viewer extends Component {
   constructor(props) {
@@ -17,16 +17,10 @@ class Viewer extends Component {
       selected: 0,
       showDetail: false,
     };
-    this.fetchList = this.fetchList.bind(this);
   }
 
   async componentWillMount() {
-    await this.fetchList();
-  }
-
-  async fetchList() {
     const { token } = this.props;
-    this.setState({ list_loaded: false});
     const data = await getExpList(token);
     this.setState({data, list_loaded: true});
   }
@@ -79,28 +73,11 @@ class Viewer extends Component {
     }
     return (
       <div className="library">
-        <style jsx global>{`.library {
-  min-height: 90vh;
-  min-width: 90wh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-}
-
-.library__list {
-  width: 600px;
-}`}</style>
+        <style jsx global>{style}</style>
         <div>
           <Button onClick={() => this.setState({show_upload_modal: true})}>Upload</Button>
         </div>
-        <UploadModal show={show_upload_modal} onClose={(async (uploaded) => {
-          
-          this.setState({show_upload_modal: false});
-          if (uploaded) {
-            await this.fetchList();
-          }
-        }).bind(this)}/>
+        <UploadModal show={show_upload_modal} onClose={() => this.setState({show_upload_modal: false})}/>
         {this.renderList()}
       </div>
       
@@ -112,4 +89,4 @@ Viewer.defaultProps = {
   itemsPerPage: 6
 }
 
-export default connect(state => ({token: state.user.token}))(Viewer);
+export default Viewer;

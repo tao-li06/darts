@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, Button, Label } from 'react-bootstrap';
-import style from './Login.scss';
 import { login } from '../../service/darts';
 import { actionUpdateToken } from '../../redux/store';
 import { connect } from 'react-redux';
@@ -31,7 +30,28 @@ class Login extends Component {
     return (
       
       <form className="login">
-      <style jsx global>{style}</style>
+      <style jsx global>{`.login {
+  width: 400px;
+  height: 360px;
+  background-color: white;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+
+  
+}
+
+.login__brand {
+  width: 150px;
+  height: 50px;
+  font-size: 32px;
+}
+
+.login__submit {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}`}</style>
         <span className="login__brand">Login</span>
         <FormGroup
           controlId="formUsername"
