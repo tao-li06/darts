@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Modal, Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 import { ScaleLoader } from 'react-spinners';
 import retrieve from '../../model/record';
-import style from './UploadModal.scss';
 import { uploadExp } from '../../service/darts';
 import { connect } from 'react-redux';
 
@@ -94,7 +93,24 @@ class UploadModal extends Component {
     const { load, fileName, name } = this.state;
     return  (
       <Modal show={show}>
-        <style jsx global>{style}</style>
+        <style jsx global>{`.upload-modal {
+  display: flex;
+  flex-direction: column;
+
+  
+}
+
+.upload-modal__row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.upload-modal__text {
+  font-size: 18px;
+  padding-left: 8px;
+  padding-right: 8px;
+}`}</style>
         <Modal.Header>
           Upload CSV
         </Modal.Header>

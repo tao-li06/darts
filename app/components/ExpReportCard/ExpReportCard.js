@@ -4,7 +4,6 @@ import Palette from '../Palette';
 import ReactCardFlip from 'react-card-flip';
 import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, 
   ToggleButton, Label, ListGroup, ListGroupItem, Pagination } from 'react-bootstrap';
-import style from './ExpReportCard.scss';
 import { connect } from 'react-redux';
 import { CircleLoader } from 'react-spinners';
 import { getExp } from '../../service/darts';
@@ -78,7 +77,76 @@ class ExpReportCard extends Component {
     const itemStart = currentPage * itemsPerPage;
     return (
       <>
-        <style jsx>{style}</style>
+        <style jsx global>
+        {`
+        .ExpReportCard {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: rgb(231, 231, 231);
+  border-style: solid;
+  padding: 40px;
+  height: 600px;
+  width: 1200px;
+  background-color: white;
+
+}
+
+.react-card-flipper {
+  width: 1200px;
+}
+
+.react-card-back {
+  background-color: white;
+}
+
+.react-card-front {
+  background-color: white;
+}
+
+.ExpReportCard__brief {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ExpReportCard__list {
+  width: 600px;
+}
+
+.ExpReportCard__nav {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
+.ExpReportCard__nav-center {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.ExpReportCard__content-container {
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ExpReportCard__content-title {
+  text-align: center;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 28px;
+}
+`}
+        </style>
         <ReactCardFlip isFlipped={showDetails} style={{width: "1200px"}}>
           <div key="front" className="ExpReportCard">
             <div className="ExpReportCard__nav">
