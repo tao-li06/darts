@@ -29,7 +29,6 @@
   },
   "devDependencies": {
     "babel-loader": "^7.1.4",
-    "node-sass": "^4.7.2",
     "sass-loader": "^7.0.1",
     "styled-jsx": "^2.2.1",
     "styled-jsx-css-loader": "^0.3.0"
