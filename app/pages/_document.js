@@ -1,5 +1,4 @@
 import Document, { Head, Main, NextScript } from 'next/document';
-import NoSSR from 'react-no-ssr';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -16,9 +15,7 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
         </Head>
         <body className="custom_class">
-          <NoSSR>
-            <Main />
-          </NoSSR>
+          <Main />
           <NextScript />
         </body>
       </html>
