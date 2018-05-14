@@ -109,17 +109,19 @@ class ExpReportCard extends Component {
 
   async componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
-    const { token, id } = this.props;
-    const json = await getExp(token, id);
-    const orders = sort(json.data);
-    this.setState({
-      data: {
-        items: json.data,
-        columns: json.headers,
-        orders
-      },
-      loaded: true
-    });
+    if (global.window) {
+      const { token, id } = this.props;
+      const json = await getExp(token, id);
+      const orders = sort(json.data);
+      this.setState({
+        data: {
+          items: json.data,
+          columns: json.headers,
+          orders
+        },
+        loaded: true
+      });
+    }
   }
 
   componentWillUnmount() {
