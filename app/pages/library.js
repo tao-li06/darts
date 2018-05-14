@@ -2,8 +2,16 @@ import React, { Component } from 'react';
 import { Navbar } from 'react-bootstrap';
 import Head from 'next/head';
 import Library from '../components/Library';
+import { connect } from 'react-redux';
+import Router from 'next/router';
 
 class DARTSView extends Component {
+  componentWillMount() {
+    if(!this.props.loggedin) {
+      Router.push("/");
+    }
+  }
+
   render() {
     return (
       <div>
@@ -20,5 +28,5 @@ class DARTSView extends Component {
   }
 }
 
-export default DARTSView;
+export default connect(state => ({loggedin: !!state.user.token}))(DARTSView);
 
