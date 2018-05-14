@@ -1,4 +1,4 @@
-const endpoint = "http://localhost";
+const endpoint = process.env.NODE_ENV == "production" ? "http://tao-li.mynetgear.com" : "http://localhost";
 
 export const login = async (username, password) => {
   const res = await fetch(`${endpoint}/api/login`,
