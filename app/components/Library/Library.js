@@ -21,7 +21,9 @@ class Viewer extends Component {
   }
 
   async componentWillMount() {
-    await this.fetchList();
+    if (global.window) {
+      await this.fetchList();
+    }
   }
 
   async fetchList() {
