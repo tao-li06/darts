@@ -73,7 +73,18 @@ class Viewer extends Component {
     if (showDetail) {
       return (
         <div className="library">
-          <style jsx global>{style}</style>
+          <style jsx global>{`.library {
+  min-height: 90vh;
+  min-width: 90wh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.library__list {
+  width: 600px;
+}`}</style>
           <ExpReportCard id={data[selected].id} onClose={() => this.setState({ showDetail: false})}/>
       </div>);
     }
