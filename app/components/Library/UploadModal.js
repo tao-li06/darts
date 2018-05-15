@@ -9,39 +9,27 @@ const STATE_NOT_LOADED = 0;
 const STATE_LOADING = 1;
 const STATE_LOADED = 2;
 
+const defaultState = {
+  load: STATE_NOT_LOADED,
+  headerFormat: 'Abundance Ratio:[^0-9]*(\\d+)[^0-9]*(\\d+)[^0-9]*$',
+  groupby: 'Master Protein Accessions',
+  identifier: 'Positions in Master Proteins',
+};
+
 class UploadModal extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      load: STATE_NOT_LOADED,
-      columns: [
-        'Abundance Ratio: (Sample, 8) / (Control, 8)',
-        'Abundance Ratio: (Sample, 7) / (Control, 7)',
-        'Abundance Ratio: (Sample, 6) / (Control, 6)',
-        'Abundance Ratio: (Sample, 5) / (Control, 5)',
-        'Abundance Ratio: (Sample, 4) / (Control, 4)',
-        'Abundance Ratio: (Sample, 3) / (Control, 3)',
-        'Abundance Ratio: (Sample, 2) / (Control, 2)',
-        'Abundance Ratio: (Sample, 1) / (Control, 1)'
-      ],
-      chartColumns: [
-        '(S8) / (C8)',
-        '(S7) / (C7)',
-        '(S6) / (C6)',
-        '(S5) / (C5)',
-        '(S4) / (C4)',
-        '(S3) / (C3)',
-        '(S2) / (C2)',
-        '(S1) / (C1)'
-      ],
-      groupby: 'Master Protein Accessions',
-      identifier: 'Positions in Master Proteins',
-    };
+    
     this.openFile = this.openFile.bind(this);
     this.submit = this.submit.bind(this);
     this.onFileSelected = this.onFileSelected.bind(this);
+    this.onEnter = this.onEnter.bind(this);
+    this.state = defaultState;
   }
-  
+
+  onEnter() {
+    this.setState(defaultState);
+  }
 
 
   openFile() {
@@ -57,16 +45,20 @@ class UploadModal extends Component {
   }
 
   async submit() {
+    const { headerFormat, file, groupby, identifier, name } = this.state;
+    
+    if (!file || !name) {
+      alert("Please enter a name and select a file!");
+      return;
+    }
     this.setState({
       load: STATE_LOADING
     });
-    const { columns, file, groupby, identifier, chartColumns, name } = this.state;
     const { token } = this.props;
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
-      const data = await retrieve(file, columns, groupby, identifier);
-      data.columns = chartColumns;
-      const ok = await uploadExp(token, name, chartColumns, data.items);
+      const data = await retrieve(file, new RegExp(headerFormat), groupby, identifier);
+      const ok = await uploadExp(token, name, data.columns, data.items);
       if (ok) {
         this.setState({
           data,
@@ -90,15 +82,19 @@ class UploadModal extends Component {
 
   render() {
     const { show } = this.props;
-    const { load, fileName, name } = this.state;
+    const { load, fileName, name, headerFormat, groupby, identifier } = this.state;
     return  (
-      <Modal show={show}>
+      <Modal show={show} onEnter={this.onEnter}>
         <style jsx global>{`.upload-modal {
-  display: flex;
-  flex-direction: column;
+          display: flex;
+          flex-direction: column;
 
-  
-}
+          
+        }
+
+        .form_group {
+          width: 100%;
+        }
 
 .upload-modal__row {
   display: flex;
@@ -125,6 +121,42 @@ class UploadModal extends Component {
                 value={name}
                 placeholder="Enter The Experiment Name."
                 onChange={(e) => this.setState({ name: e.target.value})}
+              />
+            </FormGroup>
+          </div>
+          <div className="upload-modal__row">
+            <FormGroup
+              controlId="formUsername"
+            >
+              <ControlLabel>Data Columns (Regex)</ControlLabel>
+              <FormControl
+                type="text"
+                value={headerFormat}
+                onChange={(e) => this.setState({ headerFormat: e.target.value})}
+              />
+            </FormGroup>
+          </div>
+          <div className="upload-modal__row">
+            <FormGroup
+              controlId="formUsername"
+            >
+              <ControlLabel>Group By column</ControlLabel>
+              <FormControl
+                type="text"
+                value={groupby}
+                onChange={(e) => this.setState({ groupby: e.target.value})}
+              />
+            </FormGroup>
+          </div>
+          <div className="upload-modal__row">
+            <FormGroup
+              controlId="formUsername"
+            >
+              <ControlLabel>Column identifier</ControlLabel>
+              <FormControl
+                type="text"
+                value={identifier}
+                onChange={(e) => this.setState({ identifier: e.target.value})}
               />
             </FormGroup>
           </div>

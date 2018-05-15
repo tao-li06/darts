@@ -99,9 +99,9 @@ class ExpReportCard extends Component {
 
   onKeyDown(e) {
     const { selected, showDetails, data: { orders } } = this.state;
-    if ((e.keyCode == 37 || e.keyCode === 33) && selected > 0) {
+    if ((e.keyCode == 37 || e.keyCode == 33) && selected > 0) {
       this.setState({selected: selected - 1});
-    } else if ((e.keyCode == 39 || e.keyCode === 34) && selected < orders.length - 1) {
+    } else if ((e.keyCode == 39 || e.keyCode == 34) && selected < orders.length - 1) {
       this.setState({selected: selected + 1});
     } else if (e.keyCode == 13 && selected >= 0 && selected < orders.length && !showDetails) {
       this.setState({ showDetails: true});

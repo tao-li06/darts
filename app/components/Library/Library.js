@@ -46,24 +46,47 @@ class Viewer extends Component {
       const paginationEnd = Math.min(Math.floor((data.length - 1) / itemsPerPage), currentPage + 3);
       const itemStart = currentPage * itemsPerPage;
       return (
-          
-          <ListGroup className="library__list">
-            {
-              (() => {
-                const children = [];
-                const itemsEnd = Math.min(itemStart + itemsPerPage, data.length);
-                for(let i = itemStart; i < itemsEnd; i++) {
-                  children.push(
-                    <ListGroupItem header={data[i].name} active={i === selected} onClick={() => this.setState({selected: i, showDetail: true})}>
-                    
-                    </ListGroupItem>
-                  )
+          <>
+          <Pagination>
+                <Pagination.First previous={true} onClick={() => this.setState({selected: 0})}/>
+                <Pagination.Prev previous={true} disabled={selected < itemsPerPage} onClick={() => this.setState({selected: selected - itemsPerPage})}/>
+                <Pagination.Ellipsis />
+
+                {
+                  (() => {
+                    const children = [];
+                    for(let i = paginationStart; i <= paginationEnd; i++) {
+                      children.push(
+                        <Pagination.Item active={i === currentPage} 
+                          onClick={() => this.setState({selected: (selected + (i - currentPage) * itemsPerPage)})}>
+                          {i + 1}
+                        </Pagination.Item>);
+                    }
+                    return children;
+                  })()
                 }
-                return children;
-              })()
-            }
-          </ListGroup>
-      
+
+                <Pagination.Ellipsis />
+                <Pagination.Next next={true} disabled={selected >= data.length - itemsPerPage} onClick={() => this.setState({selected: selected + itemsPerPage})}/>
+                <Pagination.Last next={true} onClick={() => this.setState({selected: data.length - 1})}/>
+              </Pagination>
+              <ListGroup className="library__list">
+                {
+                  (() => {
+                    const children = [];
+                    const itemsEnd = Math.min(itemStart + itemsPerPage, data.length);
+                    for(let i = itemStart; i < itemsEnd; i++) {
+                      children.push(
+                        <ListGroupItem header={data[i].name} active={i === selected} onClick={() => this.setState({selected: i, showDetail: true})}>
+                        
+                        </ListGroupItem>
+                      )
+                    }
+                    return children;
+                  })()
+                }
+              </ListGroup>
+          </>
       )
     }
   }

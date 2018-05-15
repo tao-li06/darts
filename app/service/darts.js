@@ -1,4 +1,4 @@
-const endpoint = "http://ec2-18-218-250-252.us-east-2.compute.amazonaws.com" ;
+const endpoint = (process.env.NODE_ENV == "production" ? "http://ec2-18-218-250-252.us-east-2.compute.amazonaws.com" : "http://localhost" );
 
 export const login = async (username, password) => {
   const res = await fetch(`${endpoint}/api/login`,
