@@ -1,9 +1,8 @@
 import Papa from 'papaparse';
 
-const retrieve = (file, columns = [], groupby, identifier) => {
+const retrieve = (file, headerFormat, groupby, identifier) => {
   return new Promise((resolve, reject) => {
     const result = {
-      columns,
       items: {}
     };
     let columnIndexes = null;
@@ -12,10 +11,25 @@ const retrieve = (file, columns = [], groupby, identifier) => {
     Papa.parse(file, {
       step: ({data: [row]}) => {
         if (!columnIndexes) {
-          columnIndexes = columns.map((column) => row.indexOf(column));
-          groupByIndex = row.indexOf(groupby);
-          identifierIndex = row.indexOf(identifier);
-        } else if (row.length >= columns.length && row[groupByIndex] && row[identifierIndex]) {
+          columnIndexes = [];
+          const columns = [];
+          row.forEach((col, index) => {
+            if (col) {
+              const r = headerFormat.exec(col);
+              if (r) {
+                columnIndexes.push(index);
+                columns.push(`F${r[1]}`);
+              }
+              if (col.toLowerCase().indexOf(groupby.toLowerCase()) >= 0) {
+                groupByIndex = index;
+              }
+              if (col.toLowerCase().indexOf(identifier.toLowerCase()) >= 0) {
+                identifierIndex = index;
+              }
+            }
+            result.columns = columns;
+          });
+        } else if (row.length >= columnIndexes.length && row[groupByIndex] && row[identifierIndex]) {
           const groupName = row[groupByIndex];
           let group = result.items[groupName];
           if (!group) {
