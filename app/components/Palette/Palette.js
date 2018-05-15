@@ -47,7 +47,7 @@ class Palette extends Component {
 
 
 Palette.defaultProps = {
-  cellW: 40,
+  cellW: 30,
   cellH: 20,
 }
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Chart from '../Chart';
 import Palette from '../Palette';
 import ReactCardFlip from 'react-card-flip';
-import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, 
+import { Glyphicon, Button, FormGroup, ControlLabel, ButtonGroup, FormControl, ButtonToolbar, ToggleButtonGroup, 
   ToggleButton, Label, ListGroup, ListGroupItem, Pagination } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { CircleLoader } from 'react-spinners';
@@ -108,6 +108,11 @@ class ExpReportCard extends Component {
     }
   }
 
+  findID(id) {
+    const { data: {orders} } = this.state;
+      this.setState({selected : orders.indexOf(id), showDetails: true});
+  }
+
   async componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
     if (global.window) {
@@ -155,13 +160,38 @@ class ExpReportCard extends Component {
         <ReactCardFlip isFlipped={showDetails} style={{width: "1200px"}}>
           <div key="front" className="ExpReportCard">
             <div className="ExpReportCard__nav">
+            <div className="ExpReportCard_SearchDialogue" >
+                  
+                    
+            </div>
               <div style={{flex: "1", justifyContent: "center", display: "flex"}}>
-                <Button bsSize="large" bsStyle="link" disabled={!data} onClick={() => this.setState({showDetails: true})}>
+              <Button bsSize="large" bsStyle="link" disabled={!data} onClick={() => this.setState({showDetails: true})}>
                   <Glyphicon glyph="th"/>
                 </Button>
+
                 <Button bsSize="large" bsStyle="link" onClick={this.props.onClose}>
-                  <Glyphicon glyph="remove"/>
+                  <Glyphicon glyph="folder-open"/>
                 </Button>
+                <Button bsSize="large" bsStyle="link" disabled={!data} onClick={()=>{
+                   const { data: {orders}, name} = this.state;
+                   if(orders.indexOf(name) != -1)
+                      this.setState({selected : orders.indexOf(name), showDetails: true});
+                      else {
+                        alert("Protein ID not found");
+                      }
+                  }}>
+                  <Glyphicon glyph="search"/>
+                </Button>
+              <FormGroup controlId="searchName">
+                <FormControl
+                  type="text"
+                  value={this.state.value}
+                  placeholder="Search by Protein ID"
+                  onChange={(e) => this.setState({name: e.target.value})}
+                  />
+              </FormGroup>
+                
+
               </div>
             </div>
             <div className="ExpReportCard__brief">
@@ -206,6 +236,7 @@ class ExpReportCard extends Component {
               </ListGroup>
             </div>
           </div>
+          
           <div className="ExpReportCard" key="back">
             <div className="ExpReportCard__nav">
               <Button bsSize="large" bsStyle="link" disabled={selected == 0 } onClick={() => this.setState({selected: selected - 1})}>
@@ -215,6 +246,7 @@ class ExpReportCard extends Component {
                 <Button bsSize="large" bsStyle="link" disabled={!data} onClick={() => this.setState({showDetails: false})}>
                   <Glyphicon glyph="th-list"/>
                 </Button>
+                
               </div>
               <Button bsSize="large" bsStyle="link" disabled={selected >= orders.length - 1} 
                 onClick={() => this.setState({selected: selected + 1})}>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, 
   ToggleButton, Label, ListGroup, ListGroupItem, Pagination } from 'react-bootstrap';
-import { getExpList } from '../../service/darts';
+import { getExpList, deleteExp} from '../../service/darts';
 import { GridLoader } from 'react-spinners';
 import { connect } from 'react-redux';
 import UploadModal from './UploadModal';
@@ -33,6 +33,15 @@ class Viewer extends Component {
     this.setState({data, list_loaded: true});
   }
 
+  async deleteItem(id) {
+    const {token } = this.props;
+    const result = await deleteExp(token, id);
+    if(result) {
+      await this.fetchList();
+    } else {
+      alert('Fail to delete.');
+    }
+  }
   
 
   renderList() {
@@ -78,7 +87,14 @@ class Viewer extends Component {
                     for(let i = itemStart; i < itemsEnd; i++) {
                       children.push(
                         <ListGroupItem header={data[i].name} active={i === selected} onClick={() => this.setState({selected: i, showDetail: true})}>
-                        
+                          <div style={{textAlign : "right"}} >
+                            <Button bsStyle="link" style={{color: "black"}} onClick={async (e) => {
+                              e.stopPropagation();
+                              await this.deleteItem(data[i].id);
+                            }}>
+                              <Glyphicon glyph="trash"/>
+                            </Button>
+                          </div>
                         </ListGroupItem>
                       )
                     }
@@ -98,35 +114,36 @@ class Viewer extends Component {
     if (showDetail) {
       return (
         <div className="library">
-          <style jsx global>{`.library {
-  min-height: 90vh;
-  min-width: 90wh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-}
+          <style jsx global>{`
+            .library {
+              min-height: 90vh;
+              min-width: 90wh;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              
+            }
 
-.library__list {
-  width: 600px;
-}`}</style>
+            .library__list {
+              width: 600px;
+            }
+          `}</style>
           <ExpReportCard id={data[selected].id} onClose={() => this.setState({ showDetail: false})}/>
       </div>);
     }
     return (
       <div className="library">
         <style jsx global>{`.library {
-  min-height: 90vh;
-  min-width: 90wh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-}
+            min-height: 90vh;
+            min-width: 90wh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
 
-.library__list {
-  width: 600px;
-}`}</style>
+          .library__list {
+            width: 600px;
+          }`}</style>
         <div style={{paddingBottom: "40px"}}>
           <Button onClick={() => this.setState({show_upload_modal: true})}>Upload</Button>
         </div>

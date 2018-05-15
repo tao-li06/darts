@@ -68,15 +68,21 @@ export const rankScore = (dataSet) => {
     for( var j  = 0; j < ikeys.length; j++) {
       const value = seq[ikeys[j]];
       const sign = value > 1 ? 1 : -1;
-      score += (Math.pow(Math.log(value), 1 ) * sign);
+      if(value > 10)
+        score += 1; 
+      else if(value < 0.1)
+        score -= 1;
+      else {
+        score += (Math.pow(Math.log(value)/Math.log(2), 1 ));
+      }
       numOfTotalDP ++;
       numOfValidDP += sign;
     }
   }
   score *= Math.pow((Math.abs(numOfValidDP) / numOfTotalDP), 2);
-  score /= numOfSubunits;
-  if(Math.abs(numOfTotalDP) <= 3)
-    score = -1;
+ 
+  if(numOfSubunits <= 3)
+    score = 0;
   return score;
 }
 

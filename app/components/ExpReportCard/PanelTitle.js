@@ -36,7 +36,7 @@ class ProteinTitle extends Component {
         );
       }
       return (
-        <h4>{id} ( {`[${identifier}]  ${fullName} - ${persistedData.scores[id].toFixed(2)}` })</h4>
+        <h4>{id} ( {`[${identifier}]  ${fullName} - ${persistedData.scores[id].toFixed(1)}` })</h4>
       );
 
     }
