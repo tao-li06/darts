@@ -1,0 +1,16 @@
+.upload-modal {
+  display: flex;
+  flex-direction: column;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__text {
+    font-size: 18px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

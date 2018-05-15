@@ -55,7 +55,7 @@ class Chart extends Component {
                             <g key={i} transform={`translate(0, ${cellH * (i)})`} >
                               <rect width={cellW} height={cellH}
                                 fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
-                              <text x={cellW / 2} y={cellH / 2} fontSize={12} textAnchor="middle" alignmentBaseline="central">{v}</text>
+                              <text fill={Math.abs(value) > 0.6? "white":"black" } x={cellW / 2} y={cellH / 2} fontSize={10} textAnchor="middle" alignmentBaseline="central">{v.toFixed(1)}</text>
                             </g>
                           </OverlayTrigger>);
                         }
@@ -86,7 +86,7 @@ Chart.defaultProps = {
   maxNameCharLength: 22,
   nameFontSize: 14,
   cellH: 30,
-  cellW: 60,
+  cellW: 35,
   normalize: (v) => Math.log2,
   max: 2,
   min: -2,

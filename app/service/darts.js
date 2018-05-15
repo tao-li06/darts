@@ -59,3 +59,17 @@ export const getExp = async (token, id) => {
   const json = await res.json();
   return res.ok && json;
 }
+
+export const deleteExp = async (token, id) => {
+  const res = await fetch(`${endpoint}/api/experiment/${id}`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "DELETE",
+      mode: "cors"
+    });
+  return res.ok;
+}
