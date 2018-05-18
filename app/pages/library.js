@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar } from 'react-bootstrap';
+import { Navbar, Glyphicon, Nav, NavItem} from 'react-bootstrap';
 import Head from 'next/head';
 import Library from '../components/Library';
 import { connect } from 'react-redux';
@@ -18,9 +18,15 @@ class DARTSView extends Component {
         <Navbar>
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="#">DARTS</a>
+              <a >DARTS</a>
             </Navbar.Brand>
+            
           </Navbar.Header>
+          <Nav pullRight>
+            
+              <NavItem href="/">Home Page
+              </NavItem>
+            </Nav>
         </Navbar>
         <Library />
       </div>

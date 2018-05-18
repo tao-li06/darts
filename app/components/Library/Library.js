@@ -8,6 +8,9 @@ import UploadModal from './UploadModal';
 import ExpReportCard from '../ExpReportCard';
 import "isomorphic-fetch";
 
+
+//Provide a list with experiments using APT from service/darts
+
 class Viewer extends Component {
   constructor(props) {
     super(props);
@@ -79,6 +82,11 @@ class Viewer extends Component {
                 <Pagination.Next next={true} disabled={selected >= data.length - itemsPerPage} onClick={() => this.setState({selected: selected + itemsPerPage})}/>
                 <Pagination.Last next={true} onClick={() => this.setState({selected: data.length - 1})}/>
               </Pagination>
+// this ListGroup = "library_list" :
+//children = Array of ListGroupItems
+//data[i]= proteinID
+//
+
               <ListGroup className="library__list">
                 {
                   (() => {

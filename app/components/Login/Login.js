@@ -4,6 +4,7 @@ import { login } from '../../service/darts';
 import { actionUpdateToken } from '../../redux/store';
 import { connect } from 'react-redux';
 import Router from 'next/router';
+import Cookies from 'js-cookie';
 
 class Login extends Component {
   constructor(props) {
@@ -19,8 +20,9 @@ class Login extends Component {
     if (!token) {
       this.setState({ invalid: true });
     } else {
-      this.props.updateToken(token);
-      Router.push("/library");
+      // TODO: set expiration date
+      Cookies.set('token', token, { expires: 7 });
+      Router.push("/studies");
     }
   }
 

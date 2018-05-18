@@ -14,6 +14,10 @@ const defaultState = {
   headerFormat: 'Abundance Ratio:[^0-9]*(\\d+)[^0-9]*(\\d+)[^0-9]*$',
   groupby: 'Master Protein Accessions',
   identifier: 'Positions in Master Proteins',
+  upperLimit: 100,
+  lowerLimit: 0,
+  minimumDataPoints: 0,
+  minimumFractions: 0,
 };
 
 class UploadModal extends Component {

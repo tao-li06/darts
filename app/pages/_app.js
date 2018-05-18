@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import Head from 'next/head';
 import Router from 'next/router';
 import { connect } from 'react-redux';
+import NoSSR from 'react-no-ssr';
 
 class DARTSApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
@@ -27,7 +28,9 @@ class DARTSApp extends App {
     const {Component, pageProps, reduxStore} = this.props
     return <Container>
       <Provider store={reduxStore}>
-        <Component {...pageProps} />
+        <NoSSR>
+          <Component {...pageProps} />
+        </NoSSR>
       </Provider>
     </Container>
   }
