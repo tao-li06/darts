@@ -107,7 +107,8 @@ class ExpReportCard extends Component {
       this.setState({ showDetails: true});
     }
   }
-
+  // selected = currentProteinID; 
+  // orders: Map(id, dataSet);
   findID(id) {
     const { data: {orders} } = this.state;
       this.setState({selected : orders.indexOf(id), showDetails: true});
@@ -134,6 +135,7 @@ class ExpReportCard extends Component {
     document.removeEventListener("keydown", this.onKeyDown, false);
     
   }
+
 
   render() {
     const { loaded } = this.state;
@@ -197,7 +199,7 @@ class ExpReportCard extends Component {
             <div className="ExpReportCard__brief">
               <Pagination>
                 <Pagination.First previous={true} onClick={() => this.setState({selected: 0})}/>
-                <Pagination.Prev previous={true} disabled={selected < itemsPerPage} onClick={() => this.setState({selected: selected - itemsPerPage})}/>
+                <Pagination.Prev previous={true} onClick={() => {if(selected - itemsPerPage >= 0) this.setState({selected: selected - itemsPerPage})}}/>
                 <Pagination.Ellipsis />
 
                 {
@@ -215,7 +217,7 @@ class ExpReportCard extends Component {
                 }
 
                 <Pagination.Ellipsis />
-                <Pagination.Next next={true} disabled={selected >= orders.length - itemsPerPage} onClick={() => this.setState({selected: selected + itemsPerPage})}/>
+                <Pagination.Next next={true} onClick={() => {if(selected + itemsPerPage <= orders.length - 1) this.setState({selected: selected + itemsPerPage})}}/>
                 <Pagination.Last next={true} onClick={() => this.setState({selected: orders.length - 1})}/>
               </Pagination>
               <ListGroup className="ExpReportCard__list">
@@ -239,7 +241,9 @@ class ExpReportCard extends Component {
           
           <div className="ExpReportCard" key="back">
             <div className="ExpReportCard__nav">
-              <Button bsSize="large" bsStyle="link" disabled={selected == 0 } onClick={() => this.setState({selected: selected - 1})}>
+              <Button bsSize="large" bsStyle="link" disabled={selected == 0 } onClick={() => {
+                this.setState({selected: selected - 1})
+                }}>
                 <Glyphicon glyph="chevron-left" />
               </Button>
               <div className="ExpReportCard__nav-center">

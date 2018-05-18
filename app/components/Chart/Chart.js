@@ -18,7 +18,7 @@ class Chart extends Component {
       normalize,
       max,
       min,
-      data,
+      data,// this.data (const keys = Object.keys(data) to )
       columns,
       color1: [h1, l1],
       color2: [h2, l2],
@@ -45,7 +45,7 @@ class Chart extends Component {
                 const row = data[rowIndex];
                 return (
                   <g transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
-                    {
+                    {// v = row[i], row
                       Object.keys(row).map((i) => {
                         const v = row[i];
                         const value = normalize(v);
