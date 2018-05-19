@@ -13,7 +13,7 @@ class Palette extends Component {
       min
     } = this.props;
     return (
-      <svg height={(steps * 2 + 1 ) * cellH} width={2 * cellW}>
+      <svg height={(steps * 2 + 1 ) * cellH} width={2 * cellW} style={{display: "inherit"}}>
         { 
           (() => {
             const cells = [];     

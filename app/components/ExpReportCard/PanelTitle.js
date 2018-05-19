@@ -9,11 +9,11 @@ class ProteinTitle extends Component {
     }
 
     async componentWillMount() {
-      return await this.updateInfo(this.props);
+      //return await this.updateInfo(this.props);
     }
 
     async componentWillReceiveProps(props) {
-      return await this.updateInfo(props);
+      //return await this.updateInfo(props);
     }
 
     async updateInfo(props) {
@@ -36,7 +36,7 @@ class ProteinTitle extends Component {
         );
       }
       return (
-        <h4>{id} ( {`[${identifier}]  ${fullName} - ${persistedData.scores[id].toFixed(1)}` })</h4>
+        <h4 style={{marginBottom: "40px"}}>{id} ( {`[${identifier}]  ${fullName} - ${persistedData.scores[id].toFixed(1)}` })</h4>
       );
 
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 import { ScaleLoader } from 'react-spinners';
 import retrieve from '../../model/record';
-import { uploadExp } from '../../service/darts';
+import { addStudy } from '../../service/darts';
 import { connect } from 'react-redux';
 
 const STATE_NOT_LOADED = 0;
@@ -14,10 +14,13 @@ const defaultState = {
   headerFormat: 'Abundance Ratio:[^0-9]*(\\d+)[^0-9]*(\\d+)[^0-9]*$',
   groupby: 'Master Protein Accessions',
   identifier: 'Positions in Master Proteins',
+  modification: 'Modifications',
   upperLimit: 100,
   lowerLimit: 0,
   minimumDataPoints: 0,
   minimumFractions: 0,
+  studyname: '',
+  description:'',
 };
 
 class UploadModal extends Component {
@@ -36,9 +39,7 @@ class UploadModal extends Component {
   }
 
 
-  openFile() {
-    this.inputEle && this.inputEle.click();
-  }
+  
 
   onFileSelected(event) {
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
@@ -49,20 +50,20 @@ class UploadModal extends Component {
   }
 
   async submit() {
-    const { headerFormat, file, groupby, identifier, name } = this.state;
+    const { headerFormat, file, groupby, identifier, name, modification, studyname, description} = this.state;
     
     if (!file || !name) {
-      alert("Please enter a name and select a file!");
+      alert("Please check your entries and select a file!");
       return;
     }
     this.setState({
       load: STATE_LOADING
     });
-    const { token } = this.props;
+    const { id } = this.props;
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
-      const data = await retrieve(file, new RegExp(headerFormat), groupby, identifier);
-      const ok = await uploadExp(token, name, data.columns, data.items);
+      const data = await retrieve(file, new RegExp(headerFormat), groupby, identifier, modification);
+      const ok = await uploadExp(id, name, data.columns, data.items);
       if (ok) {
         this.setState({
           data,
@@ -86,16 +87,13 @@ class UploadModal extends Component {
 
   render() {
     const { show } = this.props;
-    const { load, fileName, name, headerFormat, groupby, identifier } = this.state;
+    const { load, fileName, name, headerFormat, groupby, identifier, modification, studyname, description} = this.state;
     return  (
       <Modal show={show} onEnter={this.onEnter}>
         <style jsx global>{`.upload-modal {
           display: flex;
           flex-direction: column;
-
-          
         }
-
         .form_group {
           width: 100%;
         }
@@ -108,13 +106,13 @@ class UploadModal extends Component {
 
 .upload-modal__text {
   font-size: 18px;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 18px;
+  padding-right: 18px;
 }`}</style>
         <Modal.Header>
-          Upload CSV
+          Upload a experiment:
         </Modal.Header>
-        <Modal.Body className="upload-modal">
+        <Modal.Body  className="upload-modal">
           <div className="upload-modal__row">
             <FormGroup
               controlId="formUsername"
@@ -123,12 +121,11 @@ class UploadModal extends Component {
               <FormControl
                 type="text"
                 value={name}
-                placeholder="Enter The Experiment Name."
+                placeholder="Experiment Name"
                 onChange={(e) => this.setState({ name: e.target.value})}
               />
             </FormGroup>
-          </div>
-          <div className="upload-modal__row">
+            &nbsp;&nbsp;&nbsp;
             <FormGroup
               controlId="formUsername"
             >
@@ -151,8 +148,7 @@ class UploadModal extends Component {
                 onChange={(e) => this.setState({ groupby: e.target.value})}
               />
             </FormGroup>
-          </div>
-          <div className="upload-modal__row">
+            &nbsp;&nbsp;&nbsp;
             <FormGroup
               controlId="formUsername"
             >
@@ -176,8 +172,8 @@ class UploadModal extends Component {
           {
             load == STATE_NOT_LOADED && (
               <>
-                <Button onClick={this.props.onClose}>Close</Button>
                 <Button onClick={this.submit}>Upload</Button>
+                <Button onClick={this.props.onClose}>Close</Button>
               </>
             )
           }

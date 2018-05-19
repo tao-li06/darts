@@ -28,7 +28,7 @@ class Chart extends Component {
     const keys = Object.keys(data);
     const len = keys.length;
     return (
-      <div style={{display: "flex", ...style}}>
+      <div style={{display: "flex", overflow: "hidden", ...style}}>
         <svg width={headerWidth} height={cellH * columns.length + nameHeight}>
           <g transform={`translate(0, 0)`}>
             {
@@ -38,7 +38,7 @@ class Chart extends Component {
             }
           </g>
         </svg>
-        <div style={{flex: "1", overflowX: "auto"}}>
+        <div style={{overflowX: "auto"}}>
           <svg width={cellW * len} height={cellH * columns.length + nameHeight}>
             {
               keys.map((rowIndex, rowItemIndex) => {
@@ -82,7 +82,7 @@ class Chart extends Component {
 }
 
 Chart.defaultProps = {
-  headerWidth: 150,
+  headerWidth: 80,
   maxNameCharLength: 22,
   nameFontSize: 14,
   cellH: 30,
