@@ -13,12 +13,13 @@ class AddExperiment extends Component {
 
   render() {
     const { state, description, experimentName, drugID, show_upload_modal} = this.state;
+    const { id } = this.props;
     return (
       <>
-           <UploadModal  show={show_upload_modal} onClose={(async (uploaded) => {
+           <UploadModal id={id} show={show_upload_modal} onClose={(async (uploaded) => {
           this.setState({show_upload_modal: false});
         }).bind(this)}/>
-          <Button bsStyle="primary" onClick={() => this.setState({ show_upload_modal: true})}> Add an Experiment </Button>
+          <Button bsStyle="primary" onClick={() => this.setState({ show_upload_modal: true}) }> Add an Experiment </Button>
       </>
     )
   }

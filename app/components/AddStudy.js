@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
 import { ScaleLoader } from 'react-spinners';
-import { uploadStudy } from '../service/darts';
+import { addStudy} from '../service/darts';
 
 class AddStudy extends Component {
   constructor(props) {
@@ -15,9 +15,10 @@ class AddStudy extends Component {
     this.setState({ state });
   }
 
-  async addStudy() {
+  async addAStudy() {
+    const {onAdded } = this.props;
     const { name, description, label} = this.state;
-    const success = await uploadStudy(name, description, label);
+    const success = await addStudy(name, description, label);
     if(success) {
       this.setState({state: 0});
       if(this.props.onAdded) await this.props.onAdded();
@@ -26,7 +27,7 @@ class AddStudy extends Component {
   }
 
   render() {
-    const { state, name, description, label } = this.state;
+    const { state, name, description, label, onAdded } = this.state;
     return (
       <li style={{height: state == 1 ? "280px" : "100px"}} className="add-study list-group-item">
         <style jsx>{`
@@ -36,7 +37,7 @@ class AddStudy extends Component {
           }
         `}</style>
         {
-          state == 0 && <Button bsStyle="primary" onClick={() => this.changeState(1)}> Add a Study </Button>
+          state == 0 && <Button bsStyle="primary" onClick={() => this.changeState(1)}> Create a new study</Button>
         }
         {
           state == 1 && (
@@ -44,7 +45,7 @@ class AddStudy extends Component {
               <FormGroup
                 controlId="formUsername"
               >
-                <ControlLabel> &nbsp;Name</ControlLabel>
+                <ControlLabel> &nbsp;Study Name</ControlLabel>
                 <FormControl
                   type="text"
                   value={name}
@@ -54,7 +55,7 @@ class AddStudy extends Component {
               <FormGroup
                 controlId="formUsername"
               >
-                <ControlLabel> &nbsp;Description</ControlLabel>
+                <ControlLabel> &nbsp;Study Description</ControlLabel>
                 <FormControl
                   type="text"
                   value={description}
@@ -81,10 +82,10 @@ class AddStudy extends Component {
                   alert("Add a description")
                 } else {
                 this.changeState(2);
-                this.addStudy();
+                this.addAStudy();
                 }
               }}>Add</Button>
-              <Button bsStyle="info" onClick={() => this.changeState(0)} style={{marginLeft:"10px"} }>Cancel</Button>
+              <Button bsStyle="info" onClick={() => this.changeState(0)} style={{marginLeft:"10px"}}>Cancel</Button>
               </div>
             </form>
           )

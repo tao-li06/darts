@@ -1,24 +1,47 @@
-const { createServer } = require('http');
+const express= require('express');
 const { parse } = require('url');
 const next = require('next');
-
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  createServer((req, res) => {
-    // Be sure to pass `true` as the second argument to `url.parse`.
-    // This tells it to parse the query portion of the URL.
-    const parsedUrl = parse(req.url, true)
-    const { pathname, query } = parsedUrl
-    if (pathname && /^\/studies\/(\d)+\/?$/g.test(pathname)) {
-      app.render(req, res, '/study', query);
+  const server = express()
+  server.use(bodyParser.urlencoded({extended: true}));
+  server.use(bodyParser.json());
+  server.use(cookieParser());
+
+  server.use(async (req, res, next) => {
+    if (req.path != '/login' && !(req.path && req.path.startsWith('/_next')) && !req.cookies['token']) {
+      res.writeHead(302, {
+        Location: '/login'
+      })
+      res.end();
+      res.finished = true;
     } else {
-      handle(req, res, parsedUrl);
+      next();
     }
-  }).listen(3000, err => {
-    if (err) throw err
-    console.log('> Ready on http://localhost:3000')
-  })
+  });
+
+  server.get('/', (req, res) => {
+    return app.render(req, res, '/b', {
+      ...req.query,
+      subreddit: req.params.subreddit
+    })
+  });
+
+  server.get('/studies/:id', (req, res) => {
+    return app.render(req, res, '/study', {
+      ...req.query,
+      subreddit: req.params.subreddit
+    })
+  });
+
+  server.get('*', (req, res) => {
+    const parsedUrl = parse(req.url, true);
+    handle(req, res, parsedUrl);
+  });
+  server.listen(3000);
 })

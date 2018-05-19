@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 
-const retrieve = (file, headerFormat, groupby, identifier) => {
+const retrieve = (file, headerFormat, groupby, identifier, modification) => {
   return new Promise((resolve, reject) => {
     const result = {
       items: {}
@@ -8,6 +8,7 @@ const retrieve = (file, headerFormat, groupby, identifier) => {
     let columnIndexes = null;
     let groupByIndex = null;
     let identifierIndex = null;
+    let modificationIndex = null;
     Papa.parse(file, {
       step: ({data: [row]}) => {
         if (!columnIndexes) {
@@ -26,6 +27,9 @@ const retrieve = (file, headerFormat, groupby, identifier) => {
               if (col.toLowerCase().indexOf(identifier.toLowerCase()) >= 0) {
                 identifierIndex = index;
               }
+              if (col.toLowerCase().indexOf(modification.toLowerCase()) >= 0) {
+                modificationIndex = index;
+              }
             }
             result.columns = columns;
           });
@@ -42,7 +46,8 @@ const retrieve = (file, headerFormat, groupby, identifier) => {
             }
             return obj;
           }, {});
-          group[row[identifierIndex]] = records;
+          const subSequence = (row[identifierIndex] + " [" +  row[modificationIndex] + "] ");
+          group[subSequence] = records;
         }
       },
       complete: () => {
