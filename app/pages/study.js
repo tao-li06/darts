@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { ListGroup, ListGroupItem, Button, Label, PageHeader, Badge, Glyphicon, Table, 
-  ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap';
+  ControlLabel, FormGroup, FormControl, Form, Modal } from 'react-bootstrap';
 import { getStudy, deleteExp, uploadExp} from '../service/darts';
 import { connect } from 'react-redux';
 import withPage from './withPage';
 import Router from 'next/router';
+import Link from 'next/link';
 import cookies from 'next-cookies';
 import Chart from '../components/Chart';
 import Palette from '../components/Palette';
 import { ScaleLoader } from 'react-spinners';
 import retrieve, { sort } from '../model/record';
-import Exp from '../components/Exp';
+import FileFormatSetting from '../components/FileFormatSetting';
 
 const validate = (s, l) => s && s.length <= l;
 
@@ -18,24 +19,23 @@ const validate = (s, l) => s && s.length <= l;
 class Study extends Component {
   static async getInitialProps(ctx) {
     const { token } = cookies(ctx);
-    const { asPath, req } = ctx;
+    const { asPath, req, res } = ctx;
     const id = req.params.id;
     const data = await getStudy(id, token);
-    data.experiments && data.experiments.forEach(exp => {
-      exp.orders = sort(exp.data);
-    });
-    return {
-      id,
-      data
-    };
+    if (!data) {
+      return { error: 404 };
+    } else {
+      return {
+        id,
+        data
+      };
+    }
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      expanded: {},
-      selected: {},
-      show_uploadModal: false,
+      showSettings: false,
       headerFormat: 'Abundance Ratio:[^0-9]*(\\d+)[^0-9]*(\\d+)[^0-9]*$',
       groupby: 'Master Protein Accessions',
       identifier: 'Positions in Master Proteins',
@@ -61,7 +61,7 @@ class Study extends Component {
   async deleteItem(id, ProteinId) {
     const result = await deleteExp(id, ProteinId);
     if(result) {
-      //await this.fetchList();
+      this.freshPage();
     } else {
       alert('Fail to delete.');
     }
@@ -107,91 +107,83 @@ class Study extends Component {
 
   render() {
     const { data, id } = this.props;
-    const { adding, expanded } = this.state;
+    const { adding, showSettings } = this.state;
     const { fileName, name, headerFormat, groupby, identifier, modification} = this.state;
     
     return(
     <div className="container">
       <style jsx global>{
         `
-        .table__item {
-          vertical-align: top;
-          padding: 10px;
+        .file__text {
+          font-size: 18px;
+          padding-left: 18px;
+          font-weight: 300;
+        }
+
+        th {
+          vertical-align: middle !important;
+        }
+
+        .form-group {
+          margin-bottom: unset;
+        }
+
+        .paragraph-last {
+          margin-top: 30px;
         }
         `
       }</style>
-      <h3><Glyphicon glyph="object-align-bottom"/>&nbsp;&nbsp;{data.name}</h3>
+      <h3><Glyphicon style={{color: "Turquoise"}} glyph="folder-open"/>&nbsp;&nbsp;{data.name}</h3>
       <p className="lead">{data.description}</p>
       <h4><Label bsStyle="success">{data.label}</Label></h4>
+      <p className="paragraph-last">List of Experiments in the Study</p>
       <Table hover condensed  striped responsive>
           <thead>
             <tr>
-              <th>
-                <Col sm={1}>#</Col>
-                <Col sm={2}>Name</Col>
-                <Col sm={2}>Label</Col>
-                <Col sm={6}></Col>
-                <Col sm={1}></Col>
-              </th>
+              <th style={{width: "5%"}}>#</th>
+              <th style={{width: "20%"}}>Name</th>
+              <th style={{width: "25%"}}>Label</th>
+              <th style={{width: "45%"}}>Notes</th>
+              <th style={{width: "5%"}}></th>
             </tr>
           </thead>
           <tbody>
             {
-              data && data.experiments.map((exp) => (
-                expanded[exp.id] ? (
-                  <tr>
-                    <th>
-                      <div>
-                        <Col sm={1}>{exp.id}</Col>
-                        <Col sm={2}>{exp.name}</Col>
-                        <Col sm={2}>{exp.label}</Col>
-                        <Col sm={6}>
-                          <Button bsSize="large" bsStyle="link" onClick={() => this.setState({ expanded: {...expanded, [exp.id]: false}})}>
-                            <Glyphicon glyph="equalizer"/>
-                          </Button>
-                        </Col>
-                        <Col sm={1}>
-                          <Button bsSize="large" bsStyle="link" onClick={async (e) => {e.stopPropagation();
-                            await this.deleteItem(id, exp.id)}} >
-                            <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
-                          </Button>
-                        </Col>
-                      </div>
-                      <Exp items={exp.data} columns={exp.headers} orders={exp.orders}/>
-                    </th>
-                  </tr>
-                ) : (
-                
-                <tr>
-                  <th>
-                    <Col sm={1}>{exp.id}</Col>
-                    <Col sm={2}>{exp.name}</Col>
-                    <Col sm={2}>{exp.label}</Col>
-                    <Col sm={6}>
-                      <Button bsSize="large" bsStyle="link" onClick={() => this.setState({ expanded: {...expanded, [exp.id]: true} })}>
-                        <Glyphicon glyph="equalizer"/>
-                      </Button>
-                    </Col>
-                    <Col sm={1}>
-                      <Button bsSize="large" bsStyle="link" onClick={async (e) => {e.stopPropagation();
-                        await this.deleteItem(id, exp.id)}} >
-                        <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
-                      </Button>
-                    </Col>
+              data && data.experiments.map((exp, index) => (
+                <tr key={index}>
+                  <th sm={1}>{exp.id}</th>
+                  <th sm={2}>
+                    <Link href={`/studies/${id}/experiments/${exp.id}`}>
+                      <a> {exp.name} </a>
+                    </Link>
                   </th>
-                </tr>)
+                  <th sm={2}>
+                  {
+                    exp.label && exp.label.split(',').map((label, i) => <Label key={i}>{label}</Label>)
+                  }
+                  </th>
+                  <th sm={6}>{exp.notes}</th>
+                  <th sm={1}>
+                    <Button bsSize="large" bsStyle="link" onClick={async (e) => {e.stopPropagation();
+                      await this.deleteItem(id, exp.id)}} >
+                      <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
+                    </Button>
+                  </th>   
+                </tr>
               ))
             }
             {
-                adding ? 
-                  <th style={{width: "100%"}}>
-                    <div style={{display: "flex", justifyContent: "center"}}>
-                      <ScaleLoader color="blue" />
-                    </div>
-                  </th> :
-                  <th>
-                    <Col sm={1}></Col>
-                    <Col sm={2} className="table__item">
+                adding ? (
+                  <tr>
+                    <th style={{width: "100%"}}>
+                      <div style={{display: "flex", justifyContent: "center"}}>
+                        <ScaleLoader color="blue" />
+                      </div>
+                    </th> 
+                  </tr>) : (
+                  <tr>
+                    <th sm={1}></th>
+                    <th sm={2} className="table__item">
                       <FormGroup validationState={validate(this.state.name, 255) ? "success" : "error" }>
                         <FormControl
                             type="text"
@@ -200,93 +192,36 @@ class Study extends Component {
                             onChange={(e) => this.setState({ name: e.target.value})}
                           />
                       </FormGroup>
-                    </Col>
-                    <Col  sm={2} className="table__item">
+                    </th>
+                    <th  sm={2} className="table__item">
                       <FormGroup validationState={validate(this.state.label, 255) ? "success" : "error" }>
                       
                         <FormControl
                             type="text"
                             value={this.state.label}
-                            placeholder="Enter Label"
+                            placeholder="Enter Label (Splitted by comma)"
                             onChange={(e) => this.setState({ label: e.target.value})}
                           />
                         </FormGroup>
-                    </Col>
-                    <Col sm={6} className="table__item">
-                      <Form horizontal>
-                        <FormGroup>
-                          <Col sm={4}>CSV File</Col>
-                          <Col sm={8}>
-                            <div style={{display: "flex"}}>
-                              <div type="file" className="btn btn-primary" onClick={this.openFile}>
-                                <input type="file" style={{ display: "none" }} ref={(ele) => this.inputEle = ele} onChange={this.onFileSelected} />
-                                  Select File
-                              </div>
-                              <div className="upload-modal__text">{fileName}</div>
-                            </div>
-                          </Col>
-                        </FormGroup>
-                        <FormGroup
-                          controlId="formUsername"
-                        >
-                          <Col sm={4}>Data Columns (Regex)</Col>
-                          <Col sm={8}>
-                            <FormControl
-                              type="text"
-                              value={headerFormat}
-                              onChange={(e) => this.setState({ headerFormat: e.target.value})}
-                            />
-                          </Col>
-                        </FormGroup>
-                        <FormGroup
-                            controlId="formUsername"
-                          >
-                            <Col sm={4}>Protein Name Column Name</Col>
-                            <Col sm={8}>
-                              <FormControl
-                                type="text"
-                                value={groupby}
-                                onChange={(e) => this.setState({ groupby: e.target.value})}
-                              />
-                            </Col>
-                        </FormGroup>
-                        <FormGroup
-                            controlId="formUsername"
-                          >
-                            <Col  sm={4}>Subseq Name Column Name</Col>
-                            <Col  sm={8}>
-                              <FormControl
-                                type="text"
-                                value={identifier}
-                                onChange={(e) => this.setState({ identifier: e.target.value})}
-                              />
-                            </Col>
-                        </FormGroup>
-                        <FormGroup
-                            controlId="formUsername"
-                          >
-                            <Col  sm={4}>Modification Column Name</Col>
-                            <Col  sm={8}>
-                              <FormControl
-                                type="text"
-                                value={modification}
-                                onChange={(e) => this.setState({ modification: e.target.value})}
-                              />
-                            </Col>
-                        </FormGroup>
-                      </Form>
-                    </Col>
-                    <Col  sm={1} className="table__item">
-                      <Button bsStyle="link" onClick={this.submit} >
+                    </th>
+                    <th sm={6} className="table__item">
+                      <div style={{display: "flex", alignItems: "center"}}>
+                        <div type="file" className="btn btn-primary" onClick={this.openFile}>
+                          <input type="file" style={{ display: "none" }} ref={(ele) => this.inputEle = ele} onChange={this.onFileSelected} />
+                            Select File
+                        </div>
+                        <div className="file__text">{fileName}</div>
+                      </div>
+                    </th>
+                    <th>
+                      <Button bsSize="large" bsStyle="link" onClick={this.submit} >
                         <Glyphicon glyph="plus" style={{color:"#0E4D92"}}/>
                       </Button>
-                    </Col>
-                  </th>
+                    </th>
+                  </tr>)
               }
           </tbody>
       </Table>
-      
-      
     </div>
     )
   }

@@ -11,8 +11,9 @@ export const login = async (username, password) => {
       mode: "cors",
       credentials: 'include'
     });
+  if (!res.ok) return null;
   const json = await res.json();
-  return res.ok && json && json.token;
+  return json && json.token;
 }
 
 export const getStudyList = async (token = Cookies.get('token')) => {
@@ -26,8 +27,7 @@ export const getStudyList = async (token = Cookies.get('token')) => {
       method: "GET",
       mode: "cors",
     });
-  const json = await res.json();
-  return res.ok && json;
+  return res.ok && await res.json();
 }
 
 export const addStudy = async (name, description, label, token = Cookies.get('token')) => {
@@ -60,13 +60,14 @@ export const getStudy = async (id, token = Cookies.get('token'))  => {
       method: "GET",
       mode: "cors"
     });
+  if (!res.ok) return null;
   const json = await res.json();
   return res.ok && json;
 }
 
 export const uploadExp = async (id, name, label, headers, data) => {
   const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/study/${id}`,
+  const res = await fetch(`${endpoint}/api/study/${id}/experiment`,
     {
       headers: {
         Authorization: token,
@@ -85,9 +86,8 @@ export const uploadExp = async (id, name, label, headers, data) => {
   return res.ok;
 }
 
-export const getExp = async (experimentid) => {
-  const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/experiment/${experimentid}`,
+export const getExp = async (study_id, experimentid, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint}/api/study/${study_id}/experiement/${experimentid}`,
     {
       headers: {
         Authorization: token,
@@ -97,13 +97,14 @@ export const getExp = async (experimentid) => {
       method: "GET",
       mode: "cors"
     });
+  if (!res.ok) return null;
   const json = await res.json();
   return res.ok && json;
 }
 
 export const deleteExp = async (id, expId) => {
   const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/study/${id}/experienment/${expId}`,
+  const res = await fetch(`${endpoint}/api/study/${id}/experiement/${expId}`,
     {
       headers: {
         Authorization: token,
