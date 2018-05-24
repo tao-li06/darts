@@ -26,16 +26,30 @@ app.prepare().then(() => {
   });
 
   server.get('/', (req, res) => {
-    return app.render(req, res, '/b', {
-      ...req.query,
-      subreddit: req.params.subreddit
+    res.writeHead(302, {
+      Location: `/studies`
     })
+    res.end();
+    res.finished = true;
   });
 
   server.get('/studies/:id', (req, res) => {
     return app.render(req, res, '/study', {
       ...req.query,
-      subreddit: req.params.subreddit
+    })
+  });
+
+  server.get('/studies/:studyId/experiments', (req, res) => {
+    res.writeHead(302, {
+      Location: `/studies/${req.params.studyId}`
+    })
+    res.end();
+    res.finished = true;
+  });
+
+  server.get('/studies/:studyId/experiments/:id', (req, res) => {
+    return app.render(req, res, '/exp', {
+      ...req.query,
     })
   });
 

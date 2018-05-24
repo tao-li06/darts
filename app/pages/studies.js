@@ -18,10 +18,15 @@ const validate = (s, l) => s && s.length <= l;
 class Studies extends Component {
   static async getInitialProps(ctx) {
     const { token } = cookies(ctx);
+    const { res } = ctx;
     const data = await getStudyList(token);
-    return {
-      data
-    };
+    if (!data) {
+      return { error: 404 };
+    } else {
+      return {
+        data
+      };
+    }
   }
   
   constructor(props) {
@@ -72,9 +77,20 @@ class Studies extends Component {
     return(
       
       <div>
-        <p class="lead">
-        <Glyphicon glyph="th-list"/> &nbsp; List of Studies.
-        </p>
+        <style jsx global>{`
+          th {
+            vertical-align: middle !important;
+          }
+          .form-group {
+            margin-bottom: unset;
+          }
+          .table-responsive {
+            margin-top: 40px;
+          }
+        `}</style>
+        <h3><Glyphicon style={{color: "Turquoise"}} glyph="th-list"/>
+           &nbsp;&nbsp; List of Studies.
+        </h3>
 
         {/* <AddStudy onAdded={async () => await this.fetchStudies()} /> */}
         <Table hover condensed  striped responsive>
@@ -89,25 +105,27 @@ class Studies extends Component {
           </thead>
           <tbody>
             {
-              data.map((study) => (
-                <>
-                  <tr>
-                    <th>{study.id}</th>
-                    <th>
-                      <Link href={`/studies/${study.id}`}>
-                        <a> {study.name} </a>
-                      </Link>
-                    </th>
-                    <th><Label bsStyle="info">{study.label}</Label></th>
-                    <th>{study.description}</th>
-                    <th>
-                      <Button bsStyle="link" onClick={async (e) => {e.stopPropagation();
-                        await this.deleteAStudy(study.id)}} >
-                        <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
-                      </Button>
-                    </th>
-                  </tr>
-                </>
+              data.map((study, index) => (
+                <tr key={index}>
+                  <th>{study.id}</th>
+                  <th>
+                    <Link href={`/studies/${study.id}`}>
+                      <a> {study.name} </a>
+                    </Link>
+                  </th>
+                  <th>
+                    {
+                      study.label && study.label.split(',').map((label, i) => <Label key={i}>{label}</Label>)
+                    }
+                  </th>
+                  <th>{study.description}</th>
+                  <th>
+                    <Button bsStyle="link" onClick={async (e) => {e.stopPropagation();
+                      await this.deleteAStudy(study.id)}} >
+                      <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
+                    </Button>
+                  </th>
+                </tr>
               ))
             }
             <tr>

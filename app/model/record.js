@@ -24,10 +24,10 @@ const retrieve = (file, headerFormat, groupby, identifier, modification) => {
               if (col.toLowerCase().indexOf(groupby.toLowerCase()) >= 0) {
                 groupByIndex = index;
               }
-              if (col.toLowerCase().indexOf(identifier.toLowerCase()) >= 0) {
+              if (col.toLowerCase() === identifier.toLowerCase()) {
                 identifierIndex = index;
               }
-              if (col.toLowerCase().indexOf(modification.toLowerCase()) >= 0) {
+              if (col.toLowerCase() === modification.toLowerCase()) {
                 modificationIndex = index;
               }
             }
