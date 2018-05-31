@@ -46,7 +46,7 @@ const retrieve = (file, headerFormat, groupby, identifier, modification) => {
             }
             return obj;
           }, {});
-          const subSequence = (row[identifierIndex] + " [" +  row[modificationIndex] + "] ");
+          const subSequence = (row[identifierIndex] + " [" +  (row[modificationIndex] ? row[modificationIndex] : '  ') + "] ");
           group[subSequence] = records;
         }
       },

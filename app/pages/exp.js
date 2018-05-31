@@ -8,6 +8,7 @@ import { sort } from '../model/record';
 import Chart from '../components/Chart';
 import Palette from '../components/Palette';
 import Link from 'next/link';
+import ProteinName from './proteinName';
 
 class Exp extends Component {
   static async getInitialProps(ctx) {
@@ -72,6 +73,7 @@ class Exp extends Component {
     const paginationStart = Math.max(0, currentPage - 8);
     const paginationEnd = Math.min(Math.floor((orders.length - 1) / itemsPerPage), currentPage + 8);
     const itemStart = currentPage * itemsPerPage;
+    const proteinID = ' ; ';
     return (
       <div className="container">
         <style jsx global>{
@@ -101,12 +103,7 @@ class Exp extends Component {
         <p>The chart presents the data for each protein in heatmap, scroll on the chart to see extra data. Use left/right key to navigate to previous/next protein, or select protein from the list below.</p>
         <div className="container" style={{textAlign: "center"}}>
           <h3><Label>{selected}</Label>&nbsp;<Label bsStyle="info">{orders[selected]}</Label></h3>
-          <p>
-            See details at &nbsp;
-          {orders[selected] && orders[selected].split(';').map((p, i) => (
-            <a key={i} className="external-link" target="_blank" href={`https://www.uniprot.org/uniprot/${p.trim()}`}>{p}</a>)
-          )}           
-          </p>
+          <ProteinName proteinIDs={orders[selected]}/>   
         </div>
         <div style={{display: "flex", flexDirection: "row", paddingLeft: "20px", paddingRight: "20px"}}>
           <Palette color1={color1} color2={color2} steps={5} max={max} min={min}/>
