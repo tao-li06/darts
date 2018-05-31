@@ -3,9 +3,39 @@ import { color } from '../../model/palette';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 class Chart extends Component {
-  state = {
-    selectedRow: -1,
-    selectedColumn: -1
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedRow: -1,
+      selectedColumn: -1,
+    }
+    this.sortKeys = this.sortKeys.bind(this);
+  }
+
+  componentWillMount() {this.sortKeys(this.props);}
+
+  componentWillReceiveProps(props) {this.sortKeys(props);}
+
+  sortKeys(props){
+    const {data} = props;
+    const Rawkeys = Object.keys(data);
+    if(Rawkeys) {
+    var keys = Rawkeys.sort(
+      function(a,b) {
+        var regExp = /\[(\d{1,4})-(\d{1,4})\]\ \[(.*)\]/;
+        var strA = regExp.exec(a);
+        var strB = regExp.exec(b);
+        if(strA[1].length === strB[1].length) {
+          var sA = parseInt(strA[1]) * 100000 + parseInt(strA[2]) * 100 + strA[3].length;
+          var sB = parseInt(strB[1]) * 100000 + parseInt(strB[2]) * 100 + strB[3].length;
+
+          return ( sA === sB) ? 0  : (sA < sB )?  -1 : 1;   
+        } else return strA[1].length < strB[1].length ? -1 : 1;
+        
+      }
+    );
+    this.setState({keys:keys});
+  }
   }
 
   render() {
@@ -25,7 +55,7 @@ class Chart extends Component {
       style
     } = this.props;
     const nameHeight = maxNameCharLength * nameFontSize * 0.52;
-    const keys = Object.keys(data);
+    const {keys} = this.state;
     const len = keys.length;
     return (
       <div style={{display: "flex", overflow: "hidden", ...style}}>
@@ -38,8 +68,8 @@ class Chart extends Component {
             }
           </g>
         </svg>
-        <div style={{overflowX: "auto", width: "calc(100% - 80px)"}}>
-          <svg width={cellW * len} height={cellH * columns.length + nameHeight}>
+        <div style={{overflowX: "auto", width: "calc(100% - 80px)", height:"450px"}}>
+          <svg width={cellW * len} height="1000px">
             {
               keys.map((rowIndex, rowItemIndex) => {
                 const row = data[rowIndex];
@@ -55,7 +85,7 @@ class Chart extends Component {
                             <g key={i} transform={`translate(0, ${cellH * (i)})`} >
                               <rect width={cellW} height={cellH}
                                 fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
-                              <text fill={Math.abs(value) > 0.6? "white":"black" } x={cellW / 2} y={cellH / 2} fontSize={10} textAnchor="middle" alignmentBaseline="central">{v.toFixed(1)}</text>
+                              <text fill={Math.abs(value) > 0.6? "white":"black" } x={cellW / 2} y={cellH / 2} fontSize={10} textAnchor="middle" alignmentBaseline="central">{v.toFixed(2)}</text>
                             </g>
                           </OverlayTrigger>);
                         }
@@ -64,8 +94,8 @@ class Chart extends Component {
                     {
                       <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{rowIndex}</Tooltip>}>
                         <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length} 
-                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{rowIndex > 
-                          maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : rowIndex}
+                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{/*rowIndex > 
+                          maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : */ rowIndex}
                         </text>
                       </OverlayTrigger>
                     }

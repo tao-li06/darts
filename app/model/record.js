@@ -88,6 +88,29 @@ export const rankScore = (dataSet) => {
   return score/numOfTotalDP;
 }
 
+export const rankMedian = (dataSet) => {
+  var score = 0.0;
+  var numOfTotalDP = 1.0;
+  var nums = [];
+  const keys = Object.keys(dataSet);
+  for( var i  = 0; i < keys.length; i++) {
+    const seq = dataSet[keys[i]];
+    const ikeys = Object.keys(seq);
+    for( var j  = 0; j < ikeys.length; j++) {
+      const value = seq[ikeys[j]];
+      if(value > 0.02 && value < 50)
+        nums.push(value);
+      numOfTotalDP ++;
+    }
+  }
+  if(nums.length <= 3)
+    return 1;
+  nums.sort();
+  var median = Math.floor(nums.length/2);
+  return nums.length % 2 === 0? nums[median] : (nums[median] + nums[median + 1]) / 2;
+}
+
+
 /**
  * Given such data, return a sorted protein ids array.
  * data: {
@@ -108,14 +131,17 @@ export const rankScore = (dataSet) => {
  */
 const persistedData = {};
 
-export const sort = (data) => {
+export const sort = (data, rankingType) => {
   const keys = Object.keys(data)
   var length = keys.length;
   var idList = [];
   var scoreMap = {};
   for (var i = 0; i < keys.length; i++) {
     idList[i] = keys[i];
-    scoreMap[keys[i]] = rankScore(data[keys[i]]);
+    if(rankingType && rankingType == 'median')
+      scoreMap[keys[i]] = rankMedian(data[keys[i]]);
+    else 
+      scoreMap[keys[i]] = rankScore(data[keys[i]]);
   }
   persistedData.scores = scoreMap;
   return idList.sort((a,b) => scoreMap[b] - scoreMap[a]);

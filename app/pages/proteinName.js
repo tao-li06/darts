@@ -46,7 +46,7 @@ class ProteinName extends Component {
       <div>
       {
         displayedInfo.map((d) => {
-          return <a key={d.id} href={`https://www.uniprot.org/uniprot/${d.id}`}>[{d.id} : {d.name}]  n</a>;
+          return <a key={d.id} href={`https://www.uniprot.org/uniprot/${d.id}`} target="_blank">[{d.id} : {d.name}]  </a>;
         })
       }
       </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Glyphicon, Label, Pagination, Badge, Button } from 'react-bootstrap';
+import { Table, Glyphicon, Label, Pagination, Badge, Button, InputGroup, FormGroup, FormControl } from 'react-bootstrap';
 import { getExp } from '../service/darts';
 import cookies from 'next-cookies';
 import withPage from './withPage';
@@ -20,7 +20,7 @@ class Exp extends Component {
     if (!exp) {
       return { error: 404 };
     } else {
-      const orders = sort(exp.data);
+      const orders = sort(exp.data, 'median');
       return {
         id,
         studyId,
@@ -28,19 +28,74 @@ class Exp extends Component {
         orders
       };
     }
+    this.rankScore = this.rankScore.bind(this);
+
   }
 
   constructor(props) {
     super(props);
     this.onKeyDown = this.onKeyDown.bind(this);
-    this.findID = this.findID.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.state = {
-      selected: 0
+      selected: 0,
+      value:''
     }
   }
 
+  medianScore(dataSet) {
+    var score = 0.0;
+    var numOfTotalDP = 1.0;
+    var nums = [];
+    const keys = Object.keys(dataSet);
+    for( var i  = 0; i < keys.length; i++) {
+      const seq = dataSet[keys[i]];
+      const ikeys = Object.keys(seq);
+      for( var j  = 0; j < ikeys.length; j++) {
+        const value = seq[ikeys[j]];
+        if(value <= 50 && value >= 0.02)
+          nums.push(value);
+        numOfTotalDP ++;
+      }
+    }
+    nums.sort();
+    var median = Math.floor(nums.length / 2);
+    if(nums.length <= 3)
+      score = 0.0;
+    else score = nums.length % 2 === 0? nums[median] : (nums[median] + nums[median + 1]) / 2;
+    return score.toFixed(3);
+  }
+
+  rankScore (dataSet) {
+    var score = 0.0;
+    var numOfTotalDP = 1.0;
+    var numOfValidDP = 0.0;
+    var numOfSubunits = 1.0;
+    const keys = Object.keys(dataSet);
+    for( var i  = 0; i < keys.length; i++) {
+      const seq = dataSet[keys[i]];
+      const ikeys = Object.keys(seq);
+      numOfSubunits ++;
+      for( var j  = 0; j < ikeys.length; j++) {
+        const value = seq[ikeys[j]];
+        const sign = value > 1 ? 1 : -1;
+        if(value > 10)
+          score += 1;
+        else if(value < 0.1)
+          score -= 1;
+        else if(value < 0.8 || value > 1.2)
+          score += value - 1;
+        numOfTotalDP ++;
+        numOfValidDP += sign;
+      }
+    }
+    if(Math.abs(numOfValidDP) < 3)
+      score = 0;
+    return (score/numOfTotalDP).toFixed(3);
+  }
+
   onKeyDown(e) {
-    const { selected} = this.state;
+    const { selected } = this.state;
     const { orders } = this.props;
     if ((e.keyCode == 37 || e.keyCode == 33) && selected > 0) {
       this.setState({selected: selected - 1});
@@ -52,10 +107,18 @@ class Exp extends Component {
   }
   // selected = currentProteinID; 
   // orders: Map(id, dataSet);
-  findID(id) {
-    const { data: {orders} } = this.state;
-      this.setState({selected : orders.indexOf(id), showDetails: true});
+  handleChange(e) {
+    this.setState({ value: e.target.value });
   }
+
+  handleClick(props) {
+    const {value} = this.state;
+    const {orders} = this.props;
+    let ind = orders.indexOf(value);
+    if(ind != -1)
+    this.setState({ selected : ind});
+  }
+
 
   componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
@@ -66,6 +129,7 @@ class Exp extends Component {
   }
 
   render() {
+    
     const { orders, exp: {name, label, description, headers, data}, itemsPerPage,
       normalize, max, min, color1, color1: [h1, l1], color2, color2: [h2, l2] } = this.props;
     const { selected } = this.state;
@@ -98,13 +162,24 @@ class Exp extends Component {
           {
             label && label.split(',').map((l, i) => <Label key={i}>{l}</Label>)
           }
+          <FormGroup style={{float:"right", width:"150pt", marginRight:"30pt"}}>
+            <InputGroup>
+              <FormControl type="text" value={this.state.value}  placeholder="Enter text"  onChange={this.handleChange}/>
+              <InputGroup.Button>
+                <Button onClick={this.handleClick}>
+                  <Glyphicon glyph="search"/>
+                </Button>
+              </InputGroup.Button>
+            </InputGroup>
+          </FormGroup>
         </h3>
         <p className="lead">{description}</p>
-        <p>The chart presents the data for each protein in heatmap, scroll on the chart to see extra data. Use left/right key to navigate to previous/next protein, or select protein from the list below.</p>
         <div className="container" style={{textAlign: "center"}}>
           <h3><Label>{selected}</Label>&nbsp;<Label bsStyle="info">{orders[selected]}</Label></h3>
-          <ProteinName proteinIDs={orders[selected]}/>   
+          <ProteinName proteinIDs={orders[selected]}/>
+          <p> Median* = {this.medianScore(data[orders[selected]])} Rankscore = {this.rankScore(data[orders[selected]])}</p>   
         </div>
+
         <div style={{display: "flex", flexDirection: "row", paddingLeft: "20px", paddingRight: "20px"}}>
           <Palette color1={color1} color2={color2} steps={5} max={max} min={min}/>
           <Chart style={{width: "calc(100% - 60px)"}} data={data[orders[selected]]} columns={headers}
