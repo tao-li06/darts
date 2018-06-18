@@ -3,7 +3,7 @@ import "isomorphic-fetch";
 import config from '../config/config';
 
 
-export const endpoint = () => typeof window === 'undefined' ? config.endpoints.darts : 'http://localhost';
+export const endpoint = () => typeof window === 'undefined' ?  'http://localhost' : config.endpoints.darts;
 export const login = async (username, password) => {
   const res = await fetch(`${endpoint()}/api/login`,
     {
