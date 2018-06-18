@@ -58,11 +58,11 @@ class Exp extends Component {
         numOfTotalDP ++;
       }
     }
-    nums.sort();
+    nums.sort(function(a, b){return a-b});
     var median = Math.floor(nums.length / 2);
     if(nums.length <= 3)
       score = 0.0;
-    else score = nums.length % 2 === 0? nums[median] : (nums[median] + nums[median + 1]) / 2;
+    else score = nums.length % 2 === 0? (nums[nums.length/2 - 1] + nums[nums.length/2])/2 : nums[(nums.length - 1)/2];
     return score.toFixed(3);
   }
 

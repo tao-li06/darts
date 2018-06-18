@@ -1,10 +1,11 @@
 import Cookies from 'js-cookie';
 import "isomorphic-fetch";
+import config from '../config/config';
 
-export const endpoint = (process.env.NODE_ENV == "production" ? "http://ec2-18-218-250-252.us-east-2.compute.amazonaws.com" : "http://localhost" );
 
+export const endpoint = () => typeof window === 'undefined' ? config.endpoints.darts : 'http://localhost';
 export const login = async (username, password) => {
-  const res = await fetch(`${endpoint}/api/login`,
+  const res = await fetch(`${endpoint()}/api/login`,
     {
       body: JSON.stringify({ username, password }),
       method: "POST",
@@ -17,7 +18,7 @@ export const login = async (username, password) => {
 }
 
 export const getStudyList = async (token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint}/api/study`,
+  const res = await fetch(`${endpoint()}/api/study`,
     {
       headers: {
         Authorization: token,
@@ -31,7 +32,7 @@ export const getStudyList = async (token = Cookies.get('token')) => {
 }
 
 export const addStudy = async (name, description, label, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint}/api/study`,
+  const res = await fetch(`${endpoint()}/api/study`,
   {
     headers: {
       Authorization: token,
@@ -50,7 +51,7 @@ export const addStudy = async (name, description, label, token = Cookies.get('to
 }
 
 export const getStudy = async (id, token = Cookies.get('token'))  => {
-  const res = await fetch(`${endpoint}/api/study/${id}`,
+  const res = await fetch(`${endpoint()}/api/study/${id}`,
     {
       headers: {
         Authorization: token,
@@ -67,7 +68,7 @@ export const getStudy = async (id, token = Cookies.get('token'))  => {
 
 export const uploadExp = async (id, name, label, headers, data) => {
   const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/study/${id}/experiment`,
+  const res = await fetch(`${endpoint()}/api/study/${id}/experiment`,
     {
       headers: {
         Authorization: token,
@@ -87,7 +88,7 @@ export const uploadExp = async (id, name, label, headers, data) => {
 }
 
 export const getExp = async (study_id, experimentid, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint}/api/study/${study_id}/experiement/${experimentid}`,
+  const res = await fetch(`${endpoint()}/api/study/${study_id}/experiement/${experimentid}`,
     {
       headers: {
         Authorization: token,
@@ -104,7 +105,7 @@ export const getExp = async (study_id, experimentid, token = Cookies.get('token'
 
 export const deleteExp = async (id, expId) => {
   const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/study/${id}/experiement/${expId}`,
+  const res = await fetch(`${endpoint()}/api/study/${id}/experiement/${expId}`,
     {
       headers: {
         Authorization: token,
@@ -119,7 +120,7 @@ export const deleteExp = async (id, expId) => {
 
 export const deleteStudy = async (id) => {
   const token = Cookies.get('token');
-  const res = await fetch(`${endpoint}/api/study/${id}`,
+  const res = await fetch(`${endpoint()}/api/study/${id}`,
     {
       headers: {
         Authorization: token,
