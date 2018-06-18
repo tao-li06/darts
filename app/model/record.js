@@ -105,9 +105,8 @@ export const rankMedian = (dataSet) => {
   }
   if(nums.length <= 3)
     return 1;
-  nums.sort();
-  var median = Math.floor(nums.length/2);
-  return nums.length % 2 === 0? nums[median] : (nums[median] + nums[median + 1]) / 2;
+  nums.sort(function(a, b){return a-b});
+  return nums.length % 2 === 0? (nums[nums.length/2 - 1] + nums[nums.length/2])/2 : nums[(nums.length - 1)/2];
 }
 
 
