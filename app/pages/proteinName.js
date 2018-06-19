@@ -24,9 +24,10 @@ class ProteinName extends Component {
     const IDarray = proteinIDs.split(';').map( i => i.trim());
     var fullDisplay = [];
     for(let i = 0; i < IDarray.length; i++ ) {
+      const proteinJSON = (await this.getProteinInfo(IDarray[i])).protein;
       fullDisplay[i] = {
         id: IDarray[i],
-        name: (await this.getProteinInfo(IDarray[i])).protein.recommendedName.fullName.value
+        name: proteinJSON.recommendedName ? proteinJSON.recommendedName.fullName.value : proteinJSON.submittedName[0].fullName.value
       };
     }
     this.setState({ displayedInfo : fullDisplay });

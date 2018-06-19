@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Router from 'next/router';
 import Cookies from 'js-cookie';
 
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -30,11 +31,10 @@ class Login extends Component {
   render() {
     const { username, password, invalid } = this.state;
     return (
-      
+      <div style={{height:"300px", width:"300px"}}> 
+       
       <form className="login">
       <style jsx global>{`.login {
-  width: 400px;
-  height: 360px;
   background-color: white;
   padding: 30px;
   display: flex;
@@ -54,7 +54,7 @@ class Login extends Component {
   margin-left: auto;
   margin-right: auto;
 }`}</style>
-        <span className="login__brand">Login</span>
+        
         <FormGroup
           controlId="formUsername"
         >
@@ -79,6 +79,7 @@ class Login extends Component {
         </FormGroup>
         <Button onClick={this.onSubmit} className="login__submit" bsSize="large" bsStyle={invalid ? "error" : "success"}>Login</Button>
       </form>
+      </div>
     );
   }
 }

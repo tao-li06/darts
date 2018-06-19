@@ -2,9 +2,6 @@ import App, {Container} from 'next/app';
 import React from 'react';
 import withReduxStore from '../redux/with-redux-store';
 import { Provider } from 'react-redux';
-import Head from 'next/head';
-import Router from 'next/router';
-import { connect } from 'react-redux';
 import NoSSR from 'react-no-ssr';
 
 class DARTSApp extends App {
