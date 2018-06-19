@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Table, Glyphicon, Label, Pagination, Badge, Button, InputGroup, FormGroup, FormControl } from 'react-bootstrap';
 import { getExp } from '../service/darts';
 import cookies from 'next-cookies';
@@ -7,7 +6,6 @@ import withPage from './withPage';
 import { sort } from '../model/record';
 import Chart from '../components/Chart';
 import Palette from '../components/Palette';
-import Link from 'next/link';
 import ProteinName from './proteinName';
 
 class Exp extends Component {

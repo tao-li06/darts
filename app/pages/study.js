@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import { ListGroup, ListGroupItem, Button, Label, PageHeader, Badge, Glyphicon, Table, 
-  ControlLabel, FormGroup, FormControl, Form, Modal } from 'react-bootstrap';
+import { Button, Label, Glyphicon, Table, FormGroup, FormControl} from 'react-bootstrap';
 import { getStudy, deleteExp, uploadExp} from '../service/darts';
-import { connect } from 'react-redux';
 import withPage from './withPage';
-import Router from 'next/router';
 import Link from 'next/link';
 import cookies from 'next-cookies';
-import Chart from '../components/Chart';
-import Palette from '../components/Palette';
 import { ScaleLoader } from 'react-spinners';
 import retrieve, { sort } from '../model/record';
-import FileFormatSetting from '../components/FileFormatSetting';
 
 const validate = (s, l) => s && s.length <= l;
 

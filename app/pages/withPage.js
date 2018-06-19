@@ -36,7 +36,7 @@ const withPage = (WrappedComponen) => {
       const dirs = (path || '').split('/').filter(i => !!i);
       return (
         <div>
-          <Navbar inverse collapseOnSelect>
+          <Navbar collapseOnSelect>
             <Navbar.Header>
               <Navbar.Brand>
                 <a className="navbar-brand"  href="/">DARTS Platform</a>

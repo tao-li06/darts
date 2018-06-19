@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Glyphicon, Button, ButtonGroup, ButtonToolbar, ToggleButtonGroup, 
-  ToggleButton, Label, ListGroup, ListGroupItem, Pagination } from 'react-bootstrap';
+import { Button,ListGroup, ListGroupItem} from 'react-bootstrap';
 import { getExpList } from '../../service/darts';
 import { GridLoader } from 'react-spinners';
-import { connect } from 'react-redux';
 import style from './Library.scss';
 import UploadModal from './UploadModal';
 import ExpReportCard from '../ExpReportCard';

@@ -51,7 +51,6 @@ const retrieve = (file, headerFormat, groupby, identifier, modification) => {
         }
       },
       complete: () => {
-        // TODO: order the keys
         result.orders = Object.keys(result.items);
         resolve(result);
       },
@@ -64,7 +63,6 @@ export const rankScore = (dataSet) => {
   var score = 0.0;
   var numOfTotalDP = 1.0;
   var numOfValidDP = 0.0;
-  var numOfSubunits = 1.0;
   const keys = Object.keys(dataSet);
   for( var i  = 0; i < keys.length; i++) {
     const seq = dataSet[keys[i]];
@@ -89,8 +87,6 @@ export const rankScore = (dataSet) => {
 }
 
 export const rankMedian = (dataSet) => {
-  var score = 0.0;
-  var numOfTotalDP = 1.0;
   var nums = [];
   const keys = Object.keys(dataSet);
   for( var i  = 0; i < keys.length; i++) {

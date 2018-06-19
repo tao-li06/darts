@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import { Navbar, Glyphicon, Nav, NavItem, ListGroup, 
-  ListGroupItem, Breadcrumb, Button, Table, Label, FormControl, FormGroup} from 'react-bootstrap';
-import { connect } from 'react-redux';
+import {  Glyphicon, Button, Table, Label, FormControl, FormGroup} from 'react-bootstrap';
 import { getStudyList, addStudy, deleteStudy} from '../service/darts';
-import Router from 'next/router'
-import UploadModal from '../components/Library/UploadModal';
 import withPage from './withPage';
 import { ScaleLoader} from 'react-spinners';
-import AddStudy from '../components/AddStudy';
 import cookies from 'next-cookies';
 import Link from 'next/link';
 
