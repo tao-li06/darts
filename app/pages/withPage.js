@@ -26,7 +26,7 @@ const withPage = (WrappedComponen) => {
     }
 
     render() {
-      const { children, error } = this.props;
+      const { error } = this.props;
       if (error) {     
         return (
           <ErrorPage statusCode={error} />
