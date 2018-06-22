@@ -7,6 +7,15 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
+const publicPath = [
+  '/',
+  '/how-it-works',
+  '/how-it-works/',
+  '/our-team/',
+  '/our-team',
+  '/about-us'
+]
+
 app.prepare().then(() => {
   const server = express()
   server.use(bodyParser.urlencoded({extended: true}));
@@ -14,9 +23,10 @@ app.prepare().then(() => {
   server.use(cookieParser());
 
   server.use(async (req, res, next) => {
-    if (req.path != '/login' && !(req.path && req.path.startsWith('/_next')) && !req.cookies['token']) {
+    if (req.path && !(req.path.startsWith('/_next') || req.path.startsWith('/static') 
+        || publicPath.includes(req.path)) && !req.cookies['token']) {
       res.writeHead(302, {
-        Location: '/login'
+        Location: '/'
       })
       res.end();
       res.finished = true;
@@ -26,11 +36,17 @@ app.prepare().then(() => {
   });
 
   server.get('/', (req, res) => {
-    res.writeHead(302, {
-      Location: `/studies`
-    })
-    res.end();
-    res.finished = true;
+    if (req.cookies['token']) {
+      res.writeHead(302, {
+        Location: `/studies`
+      })
+      res.end();
+      res.finished = true;
+    } else {
+      return app.render(req, res, '/home', {
+        ...req.query
+      });
+    }
   });
 
   server.get('/studies/:id', (req, res) => {
