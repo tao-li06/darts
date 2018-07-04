@@ -7,6 +7,9 @@ export const endpoint = () => typeof window === 'undefined' ?  'http://localhost
 export const login = async (username, password) => {
   const res = await fetch(`${endpoint()}/api/login`,
     {
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ username, password }),
       method: "POST",
       mode: "cors",
@@ -31,7 +34,22 @@ export const getStudyList = async (token = Cookies.get('token')) => {
   return res.ok && await res.json();
 }
 
-export const addStudy = async (name, description, label, token = Cookies.get('token')) => {
+export const getUserGroupList = async(token = Cookies.get('token')) => {
+  const ugList = await fetch(`${endpoint()}/api/group`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "GET",
+      mode: "cors",
+    }
+  );
+  return ugList.ok && ugList.json();
+}
+
+export const addStudy = async (name, description, id, token = Cookies.get('token')) => {
   const res = await fetch(`${endpoint()}/api/study`,
   {
     headers: {
@@ -41,7 +59,7 @@ export const addStudy = async (name, description, label, token = Cookies.get('to
     body: JSON.stringify({
       name,
       description,
-      label,
+      id
     }),
     credentials: 'include',
     method: "POST",
@@ -65,6 +83,26 @@ export const getStudy = async (id, token = Cookies.get('token'))  => {
   const json = await res.json();
   return res.ok && json;
 }
+
+export const addGroup = async (name, description, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group`,
+  {
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      description,
+    }),
+    credentials: 'include',
+    method: "POST",
+    mode: "cors",
+  });
+  return res.ok;
+}
+
+
 
 export const uploadExp = async (id, name, label, headers, data) => {
   const token = Cookies.get('token');
@@ -121,6 +159,21 @@ export const deleteExp = async (id, expId) => {
 export const deleteStudy = async (id) => {
   const token = Cookies.get('token');
   const res = await fetch(`${endpoint()}/api/study/${id}`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "DELETE",
+      mode: "cors"
+    });
+  return res.ok;
+}
+
+export const deleteGroup = async (id) => {
+  const token = Cookies.get('token');
+  const res = await fetch(`${endpoint()}/api/group/${id}`,
     {
       headers: {
         Authorization: token,

@@ -48,6 +48,9 @@ class HowItWorks extends Component {
                   <p>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Drug composition and quality assessment.
                   </p>
+                  <br/>
+                  <br/>
+                  <br/>
                 </div>
             </div>
         

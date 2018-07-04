@@ -38,7 +38,7 @@ app.prepare().then(() => {
   server.get('/', (req, res) => {
     if (req.cookies['token']) {
       res.writeHead(302, {
-        Location: `/studies`
+        Location: `/usergroups`
       })
       res.end();
       res.finished = true;
@@ -69,9 +69,24 @@ app.prepare().then(() => {
     })
   });
 
+
+
+  server.get('/group/:id', (req, res) => {
+    return app.render(req, res, '/group', {
+      ...req.query,
+    })
+  });
+  server.get('/usergroups', (req, res) => {
+    return app.render(req, res, '/usergroups', {
+      ...req.query,
+    })
+  });
+
   server.get('*', (req, res) => {
     const parsedUrl = parse(req.url, true);
     handle(req, res, parsedUrl);
   });
+
   server.listen(3000);
 })
+
