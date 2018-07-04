@@ -20,22 +20,8 @@ export const login = async (username, password) => {
   return json && json.token;
 }
 
-export const getStudyList = async (token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint()}/api/study`,
-    {
-      headers: {
-        Authorization: token,
-        "Accept": "application/json",
-      },
-      credentials: 'include',
-      method: "GET",
-      mode: "cors",
-    });
-  return res.ok && await res.json();
-}
-
 export const getUserGroupList = async(token = Cookies.get('token')) => {
-  const ugList = await fetch(`${endpoint()}/api/group`,
+  const ugList = await fetch(`${endpoint()}/api/groups`,
     {
       headers: {
         Authorization: token,
@@ -49,8 +35,22 @@ export const getUserGroupList = async(token = Cookies.get('token')) => {
   return ugList.ok && ugList.json();
 }
 
-export const addStudy = async (name, description, id, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint()}/api/study`,
+export const getStudyList = async (group_id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${group_id}/studies`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "GET",
+      mode: "cors",
+    });
+  return res.ok && await res.json();
+}
+
+export const addStudy = async (name, description, groupid, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${groupid}/studies`,
   {
     headers: {
       Authorization: token,
@@ -59,7 +59,7 @@ export const addStudy = async (name, description, id, token = Cookies.get('token
     body: JSON.stringify({
       name,
       description,
-      id
+      groupid
     }),
     credentials: 'include',
     method: "POST",
@@ -85,7 +85,7 @@ export const getStudy = async (id, token = Cookies.get('token'))  => {
 }
 
 export const addGroup = async (name, description, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint()}/api/group`,
+  const res = await fetch(`${endpoint()}/api/groups`,
   {
     headers: {
       Authorization: token,

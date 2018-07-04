@@ -77,7 +77,7 @@ class Usergroups extends Component {
             margin-top: 40px;
           }
         `}</style>
-        <h3 style={{color:"black"}}>
+        <h3 style={{color:"black", marginBottom:"20px"}}>
             &nbsp;&nbsp; List Of User Groups 
             
         </h3>
@@ -90,10 +90,10 @@ class Usergroups extends Component {
         )}
         {
           userGroups && userGroups.map((group, index) => (
-            <Panel key={index} bsStyle="info">
+            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="info">
             <Panel.Heading>
               <Panel.Title componentClass="h3" >
-                <Link href={`/groups/${group.id}`}>
+                <Link href={`/usergroup/${group.id}`}>
                       <a> {group.name} </a>
                 </Link>
               </Panel.Title>
@@ -102,25 +102,25 @@ class Usergroups extends Component {
             </Panel>
           ))
         }
-        <Panel bsStyle="success" style={{overflow:"hidden", marginTop:"20px"}}>
+        <Panel bsStyle="success" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
           <Panel.Heading >
             <Panel.Title componentClass="h3">Create a User Group</Panel.Title>
           </Panel.Heading>
           <Panel.Body>User Groups are used to manage your team members' access to studies. A study can only be viewed and edited by authorized users.</Panel.Body>
             <div  style={{alignItems:"center", marginBottom:"20px"}}>
-            <FormGroup style={{float: "left", width:"25%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.name, 255) ? "success" : "error" }>
+            <FormGroup style={{float: "left", width:"30%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.name, 255) ? "success" : "error" }>
               <FormControl
                 type="text"
                 value={this.state.name}
-                placeholder="Enter Name"
+                placeholder="Group Name"
                 onChange={(e) => this.setState({ name: e.target.value})}
               />
               </FormGroup>
-            <FormGroup style={{float: "left", width:"25%", marginLeft:"5px"}} validationState={validate(this.state.description, 512 * 4) ? "success" : "error" }>
+            <FormGroup style={{ float: "left", width:"30%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.description, 512 * 4) ? "success" : "error" }>
                 <FormControl 
                 type="text"
                 value={this.state.description}
-                placeholder="Enter Description"
+                placeholder="Group Description"
                 onChange={(e) => this.setState({ description: e.target.value})}
               />
             </FormGroup>

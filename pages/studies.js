@@ -1,3 +1,3 @@
-import homepage from '../app/pages/studies';
+import homepage from '../app/pages/usergroups';
 
 export default homepage;
