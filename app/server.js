@@ -49,6 +49,22 @@ app.prepare().then(() => {
     }
   });
 
+  server.get('/usergroups', (req, res) => {
+    return app.render(req, res, '/usergroups', {
+      ...req.query,
+    })
+  });
+
+  server.get('/usergroup/:id', (req, res) => {
+    return app.render(req, res, '/usergroup', {
+      ...req.query,
+    })
+  });
+
+  server.get('/group/:groupId/studyId', (req, res) => {
+    return app.render(req, res, '/user')
+  });
+
   server.get('/studies/:id', (req, res) => {
     return app.render(req, res, '/study', {
       ...req.query,
@@ -71,16 +87,7 @@ app.prepare().then(() => {
 
 
 
-  server.get('/group/:id', (req, res) => {
-    return app.render(req, res, '/group', {
-      ...req.query,
-    })
-  });
-  server.get('/usergroups', (req, res) => {
-    return app.render(req, res, '/usergroups', {
-      ...req.query,
-    })
-  });
+
 
   server.get('*', (req, res) => {
     const parsedUrl = parse(req.url, true);

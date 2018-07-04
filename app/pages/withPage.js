@@ -43,8 +43,8 @@ const withPage = (WrappedComponen) => {
               </Navbar.Brand>
             </Navbar.Header>
             <Nav bsStyle="pills">
-              <NavItem eventKey={1} onClick={() => Router.push("/studies")}>
-                Studies
+              <NavItem eventKey={1} onClick={() => Router.push("/usergroups")}>
+                UserGroups
               </NavItem>
             </Nav>
             <Nav pullRight>
