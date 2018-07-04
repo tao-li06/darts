@@ -23,7 +23,7 @@ class Login extends Component {
     } else {
       // TODO: set expiration date
       Cookies.set('token', token, { expires: 7 });
-      Router.push("/studies");
+      Router.push("/usergroups");
     }
   }
 
