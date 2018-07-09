@@ -12,29 +12,43 @@ class Exp extends Component {
   static async getInitialProps(ctx) {
     const { token } = cookies(ctx);
     const { asPath, req, res } = ctx;
-    const id = req.params.id;
+    const groupId = req.params.groupId;
     const studyId = req.params.studyId;
-    const exp = await getExp(studyId, id, token);
-    if (!exp) {
-      return { error: 404 };
-    } else {
-      const orders = sort(exp.data, 'median');
+    const expId = req.params.expId;
+    const exp = await getExp(groupId, studyId, expId, token);
+    const Data = JSON.parse(exp.data);
+    const dataArray = Object.keys(Data).map(function(_) { return Data[_]; });
+    
+    const name = exp.name;
+    const headers = exp.headers;
+    const label = exp.label;
+    const key = Object.keys(dataArray);
+    var keys = [];
+    for(var k in Data) keys.push(k);
+    const orders = sort(dataArray, 'median');
+    // dataArray: list of exp data without keys;
+    //orders: numeric orders of proteins after sorting
+    //keys: order-dataArray key relation map
+    
       return {
-        id,
+        expId,
         studyId,
-        exp,
-        orders
+        groupId,
+        name, 
+        headers,
+        label,
+        orders,
+        dataArray,
+        keys
       };
     }
-    this.rankScore = this.rankScore.bind(this);
-
-  }
 
   constructor(props) {
     super(props);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.rankScore = this.rankScore.bind(this);
     this.state = {
       selected: 0,
       value:''
@@ -111,8 +125,8 @@ class Exp extends Component {
 
   handleClick(props) {
     const {value} = this.state;
-    const {orders} = this.props;
-    let ind = orders.indexOf(value);
+    const {keys, orders} = this.props;
+    let ind = orders.indexOf(keys.indexOf(value));
     if(ind != -1)
     this.setState({ selected : ind});
   }
@@ -128,14 +142,16 @@ class Exp extends Component {
 
   render() {
     
-    const { orders, exp: {name, label, description, headers, data}, itemsPerPage,
+    const { orders, name, label, headers, dataArray, keys, itemsPerPage,
       normalize, max, min, color1, color1: [h1, l1], color2, color2: [h2, l2] } = this.props;
+    const description = "description does not exist";
     const { selected } = this.state;
     const currentPage = Math.floor(selected / itemsPerPage);
     const paginationStart = Math.max(0, currentPage - 8);
     const paginationEnd = Math.min(Math.floor((orders.length - 1) / itemsPerPage), currentPage + 8);
     const itemStart = currentPage * itemsPerPage;
     const proteinID = ' ; ';
+    console.log("Data: parsed dataArray", dataArray ,"selected", selected, "exp: name", name, "label", label,  "headers", headers);
     return (
       <div className="container">
         <style jsx global>{
@@ -158,11 +174,11 @@ class Exp extends Component {
           <Glyphicon style={{color: "Turquoise"}} glyph="object-align-bottom"/>
           &nbsp;&nbsp;{name}&nbsp;&nbsp;
           {
-            label && label.split(',').map((l, i) => <Label key={i}>{l}</Label>)
+            label && label.split(',').map((l, i) => <Label style={{marginLeft:"10px"}} key={i}>{l}</Label>)
           }
           <FormGroup style={{float:"right", width:"150pt", marginRight:"30pt"}}>
             <InputGroup>
-              <FormControl type="text" value={this.state.value}  placeholder="Enter text"  onChange={this.handleChange}/>
+              <FormControl type="text" value={this.state.value}  placeholder="Search by Protein ID"  onChange={this.handleChange}/>
               <InputGroup.Button>
                 <Button onClick={this.handleClick}>
                   <Glyphicon glyph="search"/>
@@ -173,14 +189,14 @@ class Exp extends Component {
         </h3>
         <p className="lead">{description}</p>
         <div className="container" style={{textAlign: "center"}}>
-          <h3><Label>{selected}</Label>&nbsp;<Label bsStyle="info">{orders[selected]}</Label></h3>
-          <ProteinName proteinIDs={orders[selected]}/>
-          <p> Median* = {this.medianScore(data[orders[selected]])} Rankscore = {this.rankScore(data[orders[selected]])}</p>   
+          <h3><Label>{selected}</Label>&nbsp;<Label bsStyle="success">{keys[orders[selected]]}</Label></h3>
+          <ProteinName proteinIDs={keys[orders[selected]]}/>
+          <p> Median* = {this.medianScore(dataArray[orders[selected]])} Rankscore = {this.rankScore(dataArray[orders[selected]])}</p>   
         </div>
 
         <div style={{display: "flex", flexDirection: "row", paddingLeft: "20px", paddingRight: "20px"}}>
           <Palette color1={color1} color2={color2} steps={5} max={max} min={min}/>
-          <Chart style={{width: "calc(100% - 60px)"}} data={data[orders[selected]]} columns={headers}
+          <Chart style={{width:"100%"}} data={dataArray[orders[selected]]} columns={headers}
             normalize={normalize} max={max} min={min} color1={color1} color2={color2}/>
         </div>
         <Table hover condensed  striped responsive>
@@ -201,11 +217,11 @@ class Exp extends Component {
                 children.push(
                   <tr key={i} style={ i === selected ? { background: "lightblue"} : null }>
                     <th><Badge>{i}</Badge></th>
-                    <th  onClick={() => this.setState({selected: i, showDetails: true})}><Button bsStyle="link">{orders[i]}</Button></th>
+                    <th  onClick={() => this.setState({selected: i, showDetails: true})}><Button bsStyle="link">{keys[orders[i]]}</Button></th>
                     <th/>
                     <th>
                       {
-                        orders[i] && orders[i].split(';').map((p, i) => <a key={i} className="external-link" target="_blank" href={`https://www.uniprot.org/uniprot/${p.trim()}`}>{p}</a>)
+                        keys[orders[i]] && keys[orders[i]].split(';').map((p, i) => <a key={i} className="external-link" target="_blank" href={`https://www.uniprot.org/uniprot/${p.trim()}`}>{p}</a>)
                       }
                     </th>
                   </tr>

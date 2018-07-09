@@ -18,6 +18,7 @@ class Chart extends Component {
 
   sortKeys(props){
     const {data} = props;
+    console.log("data in Chartjs 22",data);
     const Rawkeys = Object.keys(data);
     if(Rawkeys) {
     var keys = Rawkeys.sort(
@@ -57,12 +58,14 @@ class Chart extends Component {
     const nameHeight = maxNameCharLength * nameFontSize * 0.52;
     const {keys} = this.state;
     const len = keys.length;
+    const columnS = JSON.parse(columns);
+    console.log("Reached chart.js, this is the data:", data);
     return (
       <div style={{display: "flex", overflow: "hidden", ...style}}>
-        <svg width={headerWidth} height={cellH * columns.length + nameHeight}>
+        <svg width={headerWidth} height={cellH * columnS.length + nameHeight}>
           <g transform={`translate(0, 0)`}>
             {
-              columns.map((column, index) => (
+              columnS.map((column, index) => (
                 <text key={index} x={headerWidth / 2} y={ cellH * (index) + cellH / 2} textAnchor="middle"  alignmentBaseline="central">{column}</text>
               ))
             }
@@ -74,7 +77,7 @@ class Chart extends Component {
               keys.map((rowIndex, rowItemIndex) => {
                 const row = data[rowIndex];
                 return (
-                  <g key={rowItemIndex} transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
+                  <g key={rowItemIndex} transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columnS.length * cellH + nameHeight}>
                     {// v = row[i], row
                       Object.keys(row).map((i) => {
                         const v = row[i];
@@ -93,8 +96,8 @@ class Chart extends Component {
                     }
                     {
                       <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{rowIndex}</Tooltip>}>
-                        <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length} 
-                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{/*rowIndex > 
+                        <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columnS.length} 
+                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columnS.length})`}>{/*rowIndex > 
                           maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : */ rowIndex}
                         </text>
                       </OverlayTrigger>

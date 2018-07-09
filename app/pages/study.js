@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Label, Glyphicon, Table, FormGroup, FormControl} from 'react-bootstrap';
-import { getStudy, deleteExp, uploadExp} from '../service/darts';
+import { getStudyInfo, deleteExp, uploadExp} from '../service/darts';
 import withPage from './withPage';
 import Link from 'next/link';
 import cookies from 'next-cookies';
@@ -9,22 +9,21 @@ import retrieve, { sort } from '../model/record';
 
 const validate = (s, l) => s && s.length <= l;
 
-
 class Study extends Component {
   static async getInitialProps(ctx) {
     const { token } = cookies(ctx);
     const { asPath, req, res } = ctx;
-    const id = req.params.id;
-    const data = await getStudy(id, token);
-    if (!data) {
-      return { error: 404 };
-    } else {
+    const groupid = req.params.groupId;
+    const studyid = req.params.studyId;
+    const studyInfo = await getStudyInfo(groupid, studyid, token);
       return {
-        id,
-        data
+        studyid,
+        groupid,
+        token,
+        studyInfo
       };
-    }
   }
+  
 
   constructor(props) {
     super(props);
@@ -38,6 +37,7 @@ class Study extends Component {
     this.openFile = this.openFile.bind(this);
     this.onFileSelected = this.onFileSelected.bind(this);
     this.submit = this.submit.bind(this);
+    this.trash = this.trash.bind(this);
   }
 
   openFile() {
@@ -59,10 +59,12 @@ class Study extends Component {
     } else {
       alert('Fail to delete.');
     }
+  
   }
 
   async submit() {
-    const { headerFormat, file, groupby, identifier, name, modification, label} = this.state;
+    console.log();
+    const { headerFormat, file, groupby, identifier, name, modification, label, description} = this.state;
     
     if (!file || !name) {
       alert("Please check your entries and select a file!");
@@ -71,11 +73,12 @@ class Study extends Component {
     this.setState({
       adding: true
     });
-    const { id } = this.props;
+    const { studyid, groupid, token } = this.props;
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
       const data = await retrieve(file, new RegExp(headerFormat), groupby, identifier, modification);
-      const ok = await uploadExp(id, name, label, data.columns, data.items);
+      console.log(JSON.stringify(data));
+      const ok = await uploadExp(groupid, name, label, data.columns, description, data.items, studyid, token);
       if (ok) {
         this.setState({
           adding: false,
@@ -90,8 +93,14 @@ class Study extends Component {
       console.log(e);
       this.setState({
         adding: false
-      });
+      }); 
     }
+  }
+
+  async trash(groupid, studyid, expId, token) {
+    const ok = deleteExp(groupid, studyid, expId, token);
+    if(ok)
+      this.freshPage();
   }
 
   freshPage() {
@@ -100,10 +109,10 @@ class Study extends Component {
   }
 
   render() {
-    const { data, id } = this.props;
-    const { adding, showSettings } = this.state;
-    const { fileName, name, headerFormat, groupby, identifier, modification} = this.state;
+    const { studyid, groupid, studyInfo, token  } = this.props;
     
+    const { adding} = this.state;
+    const { fileName} = this.state;
     return(
     <div className="container">
       <style jsx global>{
@@ -127,56 +136,58 @@ class Study extends Component {
         }
         `
       }</style>
-      <h3><Glyphicon style={{color: "Turquoise"}} glyph="folder-open"/>&nbsp;&nbsp;{data.name}</h3>
-      <p className="lead">{data.description}</p>
-      <h4><Label bsStyle="success">{data.label}</Label></h4>
+      <h3><Glyphicon style={{color: "Turquoise"}} glyph="folder-open"/>&nbsp;&nbsp;{studyInfo.name}</h3>
+      <p className="lead">{studyInfo.description}</p>
       <p className="paragraph-last">List of Experiments in the Study</p>
       <Table hover condensed  striped responsive>
           <thead>
             <tr>
-              <th style={{width: "5%"}}>#</th>
-              <th style={{width: "20%"}}>Name</th>
-              <th style={{width: "25%"}}>Label</th>
-              <th style={{width: "45%"}}>Notes</th>
-              <th style={{width: "5%"}}></th>
+              <th style={{width: "1%"}}>#</th>
+              <th style={{width: "15%"}}>Name</th>
+              <th style={{width: "9%"}}>Label</th>
+              <th style={{width: "30%"}}>Description</th>
+              <th style={{width: "40%"}}></th>
+              
             </tr>
           </thead>
           <tbody>
             {
-              data && data.experiments.map((exp, index) => (
+              studyInfo.experiments && studyInfo.experiments.map((exp, index) => (
                 <tr key={index}>
                   <th sm={1}>{exp.id}</th>
                   <th sm={2}>
-                    <Link href={`/studies/${id}/experiments/${exp.id}`}>
+                    <Link href={`/usergroup/${groupid}/study/${studyid}/experiment/${exp.id}`}>
                       <a> {exp.name} </a>
                     </Link>
                   </th>
                   <th sm={2}>
                   {
-                    exp.label && exp.label.split(',').map((label, i) => <Label key={i}>{label}</Label>)
+                    exp.label && exp.label.split(',').map((label, i) => <Label style={{marginRight:"5px"}} key={i}>{label}</Label>)
                   }
                   </th>
-                  <th sm={6}>{exp.notes}</th>
-                  <th sm={1}>
-                    <Button bsSize="large" bsStyle="link" onClick={async (e) => {e.stopPropagation();
-                      await this.deleteItem(id, exp.id)}} >
-                      <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
-                    </Button>
-                  </th>   
+                  <th>
+                    {exp.description}
+                  </th>
+                  <th>  
+                    <Button bsSize="large" bsStyle="link" onClick={()=> this.trash(groupid, studyid, exp.id, token)} >
+                            <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
+                    </Button> 
+                  </th>
                 </tr>
               ))
             }
             {
                 adding ? (
                   <tr>
-                    <th style={{width: "100%"}}>
+                    <th style={{width: "80%"}}>
                       <div style={{display: "flex", justifyContent: "center"}}>
                         <ScaleLoader color="blue" />
                       </div>
                     </th> 
                   </tr>) : (
+
                   <tr>
-                    <th sm={1}></th>
+                    <th sm={1}/>
                     <th sm={2} className="table__item">
                       <FormGroup validationState={validate(this.state.name, 255) ? "success" : "error" }>
                         <FormControl
@@ -193,8 +204,19 @@ class Study extends Component {
                         <FormControl
                             type="text"
                             value={this.state.label}
-                            placeholder="Enter Label (Splitted by comma)"
+                            placeholder="Enter Labels, e.g. 2018-07-05, Mouse"
                             onChange={(e) => this.setState({ label: e.target.value})}
+                          />
+                        </FormGroup>
+                    </th>
+                    <th  sm={3} className="table__item">
+                      <FormGroup validationState={validate(this.state.label, 255) ? "success" : "error" }>
+                      
+                        <FormControl
+                            type="text"
+                            value={this.state.description}
+                            placeholder="Enter description, e.g. successful run"
+                            onChange={(e) => this.setState({ description: e.target.value})}
                           />
                         </FormGroup>
                     </th>
@@ -205,12 +227,11 @@ class Study extends Component {
                             Select File
                         </div>
                         <div className="file__text">{fileName}</div>
+                        <Button bsSize="large" bsStyle="link" onClick={this.submit} >
+                          <Glyphicon glyph="plus" style={{color:"#0E4D92"}}/>
+                        </Button>
                       </div>
-                    </th>
-                    <th>
-                      <Button bsSize="large" bsStyle="link" onClick={this.submit} >
-                        <Glyphicon glyph="plus" style={{color:"#0E4D92"}}/>
-                      </Button>
+
                     </th>
                   </tr>)
               }

@@ -17,7 +17,7 @@ export const login = async (username, password) => {
     });
   if (!res.ok) return null;
   const json = await res.json();
-  return json && json.token;
+  return json;
 }
 
 export const getUserGroupList = async(token = Cookies.get('token')) => {
@@ -35,6 +35,94 @@ export const getUserGroupList = async(token = Cookies.get('token')) => {
   return ugList.ok && ugList.json();
 }
 
+
+export const addGroup = async (name, description, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/groups`,
+  {
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      description,
+    }),
+    credentials: 'include',
+    method: "POST",
+    mode: "cors",
+  });
+  return res.ok;
+}
+
+export const deleteUserGroup = async (id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${id}`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "DELETE",
+      mode: "cors"
+    });
+  return res.ok;
+}
+
+export const getUsersOfGroup = async(id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${id}/users`,
+    {
+      headers : {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method:"GET",
+      mode: "cors"
+    });
+    if(!res.ok) return null;
+    const json = await res.json();
+    return res.ok && json;
+}
+
+export const addUserToGroup = async(id, name, setAsAdmin, token = Cookies.get('token')) => {
+  const is_admin = setAsAdmin.toString();
+  console.log(id, name, is_admin, token);
+  const res = await fetch(`${endpoint()}/api/group/${id}/users`,
+    {
+      headers : {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        is_admin,
+      }),
+      credentials: 'include',
+      method:"POST",
+      mode: "cors"
+    });
+  return res.ok;
+}
+
+export const deleteUserFromGroup = async(id, name, token = Cookies.get('token')) => {
+  const is_admin = "false";
+  const res = await fetch(`${endpoint()}/api/group/${id}/users`,
+    {
+      headers : {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        is_admin,
+      }),
+      credentials: 'include',
+      method:"DELETE",
+      mode: "cors"
+    });
+  return res.ok;
+}
+
 export const getStudyList = async (group_id, token = Cookies.get('token')) => {
   const res = await fetch(`${endpoint()}/api/group/${group_id}/studies`,
     {
@@ -47,6 +135,7 @@ export const getStudyList = async (group_id, token = Cookies.get('token')) => {
       mode: "cors",
     });
   return res.ok && await res.json();
+  
 }
 
 export const addStudy = async (name, description, groupid, token = Cookies.get('token')) => {
@@ -67,9 +156,9 @@ export const addStudy = async (name, description, groupid, token = Cookies.get('
   });
   return res.ok;
 }
-
-export const getStudy = async (id, token = Cookies.get('token'))  => {
-  const res = await fetch(`${endpoint()}/api/study/${id}`,
+//return a list of study
+export const getStudyInfo = async (group_id, study_id, token = Cookies.get('token'))  => {
+  const res = await fetch(`${endpoint()}/api/group/${group_id}/study/${study_id}`,
     {
       headers: {
         Authorization: token,
@@ -79,34 +168,33 @@ export const getStudy = async (id, token = Cookies.get('token'))  => {
       method: "GET",
       mode: "cors"
     });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    return null;
+  }
+  
   const json = await res.json();
   return res.ok && json;
 }
 
-export const addGroup = async (name, description, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint()}/api/groups`,
+export const deleteStudy = async (group_id, study_id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${group_id}/study/${study_id}`,
   {
     headers: {
       Authorization: token,
-      "Content-Type": "application/json",
+      "Accept": "application/json",
     },
-    body: JSON.stringify({
-      name,
-      description,
-    }),
     credentials: 'include',
-    method: "POST",
-    mode: "cors",
+    method: "DELETE",
+    mode: "cors"
   });
-  return res.ok;
+  if(!res.ok) return null;
+  const json = await res.json();
+  return res.ok && json;
 }
 
-
-
-export const uploadExp = async (id, name, label, headers, data) => {
-  const token = Cookies.get('token');
-  const res = await fetch(`${endpoint()}/api/study/${id}/experiment`,
+export const uploadExp = async (groupid, name, label, headers, description, data, studyid, token = Cookies.get('token')) => {
+  console.log("uploadExp called", groupid, name, label, headers, description, data, studyid, token);
+  const res = await fetch(`${endpoint()}/api/group/${groupid}/study/${studyid}/experiments`,
     {
       headers: {
         Authorization: token,
@@ -114,19 +202,22 @@ export const uploadExp = async (id, name, label, headers, data) => {
       },
       body: JSON.stringify({
         name,
-        headers,
+        headers: JSON.stringify(headers),
         label,
-        data,
+        description,
+        data: JSON.stringify(data),
+        studyid,
       }),
       credentials: 'include',
       method: "POST",
       mode: "cors",
     });
+    console.log("sent")
   return res.ok;
 }
 
-export const getExp = async (study_id, experimentid, token = Cookies.get('token')) => {
-  const res = await fetch(`${endpoint()}/api/study/${study_id}/experiement/${experimentid}`,
+export const getExp = async (group_id, study_id, experimentid, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${group_id}/study/${study_id}/experiment/${experimentid}`,
     {
       headers: {
         Authorization: token,
@@ -141,9 +232,8 @@ export const getExp = async (study_id, experimentid, token = Cookies.get('token'
   return res.ok && json;
 }
 
-export const deleteExp = async (id, expId) => {
-  const token = Cookies.get('token');
-  const res = await fetch(`${endpoint()}/api/study/${id}/experiement/${expId}`,
+export const deleteExp = async (gid, sid, expId, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${gid}/study/${sid}/experiment/${expId}`,
     {
       headers: {
         Authorization: token,
@@ -156,32 +246,108 @@ export const deleteExp = async (id, expId) => {
   return res.ok;
 }
 
-export const deleteStudy = async (id) => {
-  const token = Cookies.get('token');
-  const res = await fetch(`${endpoint()}/api/study/${id}`,
+export const canUseUsername = async (name, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/username/${name}`,
     {
-      headers: {
+      headers:{
         Authorization: token,
         "Accept": "application/json",
       },
-      credentials: 'include',
-      method: "DELETE",
-      mode: "cors"
+      credentials: "include",
+      method: "GET",
+      mode:"cors"
     });
+    if(res.ok) return true;
+    else return false;
+}
+
+export const addUser = async (name, password, email, description) => {
+  const is_admin = "false";
+  console.log(name, password, email, description, is_admin);
+  const res = await fetch(`${endpoint()}/api/users`,
+  {
+    headers:{
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      password,
+      email,
+      description,
+      is_admin,
+    }),
+    credentials: "include",
+    method:"POST",
+    mode:"cors"
+  });
+  if(res.ok) return true;
+  else return false;
+}  
+
+export const updateUser = async(id, name, password, email, description, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/user/${id}`,
+  {
+    headers:{
+      Authorization: token,
+      "Accept": "application/json",
+    },
+    body: JSON.stringify({
+      id,
+      name,
+      password,
+      email,
+      description,
+      studyid
+    }),
+    credentials: "include",
+    method: "POST",
+    mode: "cors"
+
+  });
   return res.ok;
 }
 
-export const deleteGroup = async (id) => {
-  const token = Cookies.get('token');
-  const res = await fetch(`${endpoint()}/api/group/${id}`,
+export const deleteUser = async(id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/user/${id}`,
+  {
+    headers:{
+      Authorization: token,
+      "Accept": "application/json",
+    },
+    credentials: "include",
+    method: "DELETE",
+    mode: "cors"
+
+  });
+  return res.ok;
+}
+
+export const getUser = async(id, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/user/${id}`,
+  {
+    headers:{
+      Authorization: token,
+      "Accept" : "application/json",
+    },
+    credentials: "include",
+    method: "GET",
+    mode: "cors"
+  });
+  if(!res.ok) return null;
+  const json = await res.json();
+  return res.ok && json;
+}
+
+export const getLoggedInfo = async(token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/users`,
     {
       headers: {
         Authorization: token,
-        "Accept": "application/json",
+        "Accept" : "application/json",
       },
-      credentials: 'include',
-      method: "DELETE",
+      credentials: "include",
+      method: "GET",
       mode: "cors"
     });
-  return res.ok;
+    return res.ok && await res.json;
 }
