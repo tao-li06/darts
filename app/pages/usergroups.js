@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {  Glyphicon, FormControl, FormGroup, Panel} from 'react-bootstrap';
-import { addGroup, getUserGroupList, deleteGroup} from '../service/darts';
+import { addGroup, getUserGroupList} from '../service/darts';
 import withPage from './withPage';
 import { ScaleLoader} from 'react-spinners';
 import cookies from 'next-cookies';
@@ -27,7 +27,6 @@ class Usergroups extends Component {
     super(props);
     const{userGroups} = this.props;
     this.addUserGroup = this.addUserGroup.bind(this);
-    this.deleteUserGroup = this.deleteUserGroup.bind(this);
     this.state = { 
       adding: false,
       numOfGroups: userGroups.length,
@@ -47,12 +46,6 @@ class Usergroups extends Component {
     }
   }
 
-  async deleteUserGroup(groupID) {
-    const ok = await deleteGroup(groupID);
-    if(ok) {
-      this.freshPage();
-    }
-  }
 
   freshPage() {
     const url = window.location.href;
@@ -90,7 +83,7 @@ class Usergroups extends Component {
         )}
         {
           userGroups && userGroups.map((group, index) => (
-            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="info">
+            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="warning">
             <Panel.Heading>
               <Panel.Title componentClass="h3" >
                 <Link href={`/usergroup/${group.id}`}>
@@ -102,7 +95,7 @@ class Usergroups extends Component {
             </Panel>
           ))
         }
-        <Panel bsStyle="success" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
+        <Panel bsStyle="info" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
           <Panel.Heading >
             <Panel.Title componentClass="h3">Create a User Group</Panel.Title>
           </Panel.Heading>

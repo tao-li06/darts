@@ -55,31 +55,31 @@ app.prepare().then(() => {
     })
   });
 
+  server.get('/usergroup', (req, res) => {
+    return app.render(req, res, '/usergroups', {
+      ...req.query,
+    })
+  });
+
   server.get('/usergroup/:id', (req, res) => {
     return app.render(req, res, '/usergroup', {
       ...req.query,
     })
   });
 
-  server.get('/group/:groupId/studyId', (req, res) => {
-    return app.render(req, res, '/user')
-  });
-
-  server.get('/studies/:id', (req, res) => {
-    return app.render(req, res, '/study', {
+  server.get('/usergroup/:id/studys', (req, res) => {
+    return app.render(req, res, '/usergroup', {
       ...req.query,
     })
   });
 
-  server.get('/studies/:studyId/experiments', (req, res) => {
-    res.writeHead(302, {
-      Location: `/studies/${req.params.studyId}`
+  server.get('/usergroup/:groupId/study/:studyId', (req, res) => {
+    return app.render(req, res, '/study',{
+    ...req.query,
     })
-    res.end();
-    res.finished = true;
   });
 
-  server.get('/studies/:studyId/experiments/:id', (req, res) => {
+  server.get('/usergroup/:groupId/study/:studyId/experiment/:expId', (req, res) => {
     return app.render(req, res, '/exp', {
       ...req.query,
     })

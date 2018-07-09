@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Button, Label } from 'react-bootstrap';
+import { addUser} from '../service/darts';
+import Router from 'next/router';
 
 class Register extends Component {
   constructor(props) {
@@ -10,7 +12,11 @@ class Register extends Component {
   }
 
   async onSubmit() {
-    const { username, password, email, company } = this.state;
+    const { username, password, email, company, invalid } = this.state;
+      const ok = invalid? false : await addUser (username, password, email, company)
+    if(ok) {
+        Router.push("/");
+    }
   }
 
   render(){

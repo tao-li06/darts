@@ -54,7 +54,11 @@ const withPage = (WrappedComponen) => {
           <div className="container">
             <Breadcrumb>
               {
-                dirs.map((d, index) => <Breadcrumb.Item key={index} href={`/${dirs.slice(0, index + 1).join('/')}`} active={index == dirs.length - 1}>
+                dirs.map((d, index) => <Breadcrumb.Item key={index} 
+                
+                href={`/${dirs.slice(0, index + 1).join('/')}`} 
+                  
+                  active={index > 0 && index % 2 == 0}>
                   {format(d)}
                 </Breadcrumb.Item>)
               }

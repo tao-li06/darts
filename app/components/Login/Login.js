@@ -17,12 +17,19 @@ class Login extends Component {
 
   async onSubmit() {
     const { username, password } = this.state;
-    const token = await login(username, password);
-    if (!token) {
+    const json = await login(username, password);
+    
+    if (!json) {
       this.setState({ invalid: true });
     } else {
       // TODO: set expiration date
+      const { token, username, description, email, id, is_admin } = json;
       Cookies.set('token', token, { expires: 7 });
+      Cookies.set('username', username, { expires: 7 });
+      Cookies.set('description', description, { expires: 7 });
+      Cookies.set('email', email, { expires: 7 });
+      Cookies.set('id', id, { expires: 7 });
+      Cookies.set('is_admin', is_admin, { expires: 7 });
       Router.push("/usergroups");
     }
   }
@@ -77,7 +84,7 @@ class Login extends Component {
             onChange={(e) => this.setState({ password: e.target.value})}
           />
         </FormGroup>
-        <Button onClick={this.onSubmit} className="login__submit" bsSize="large" bsStyle={invalid ? "error" : "success"}>Login</Button>
+        <Button onClick={this.onSubmit} className="login__submit" bsSize="large" bsStyle={"success"}>Login</Button>
       </form>
       </div>
     );

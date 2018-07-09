@@ -96,7 +96,6 @@ export const rankMedian = (dataSet) => {
       const value = seq[ikeys[j]];
       if(value > 0.02 && value < 50)
         nums.push(value);
-      numOfTotalDP ++;
     }
   }
   if(nums.length <= 3)
@@ -127,17 +126,20 @@ export const rankMedian = (dataSet) => {
 const persistedData = {};
 
 export const sort = (data, rankingType) => {
-  const keys = Object.keys(data)
+  const keys = Object.keys(data);
   var length = keys.length;
   var idList = [];
-  var scoreMap = {};
+  var scoreMap = [];
   for (var i = 0; i < keys.length; i++) {
-    idList[i] = keys[i];
-    if(rankingType && rankingType == 'median')
-      scoreMap[keys[i]] = rankMedian(data[keys[i]]);
-    else 
-      scoreMap[keys[i]] = rankScore(data[keys[i]]);
+    idList[i] = i;
+    if(rankingType && rankingType == 'median') {
+      scoreMap[i] = rankMedian(data[i]);
+      
+    }
+    //else 
+      //scoreMap[keys[i]] = rankScore(data[keys[i]]);
   }
+  console.log("scoremap", scoreMap, "idlist", idList);
   persistedData.scores = scoreMap;
   return idList.sort((a,b) => scoreMap[b] - scoreMap[a]);
 }
