@@ -1,3 +1,3 @@
-import homepage from '../app/pages/usergroups';
+import homepage from '../app/pages/usergroup';
 
 export default homepage;

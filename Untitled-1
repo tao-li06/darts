@@ -1,0 +1,19 @@
+# Docker commands
+## Image commands
+sudo docker build . -t <tag_name>
+
+## Container commands
+### List all containers
+sudo docker container List
+
+### Stop container
+sudo docker container stop <container_name>
+
+### Remove container
+sudo docker container rm <container_name>
+
+### Start container
+sudo docker container start <container_name>
+
+### Initiate container
+sudo docker container run -d -p 80:80 --name <container_name> <image_tag_name>
