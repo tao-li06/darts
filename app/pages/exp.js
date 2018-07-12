@@ -7,10 +7,6 @@ import { sort } from '../model/record';
 import Chart from '../components/Chart';
 import Palette from '../components/Palette';
 import ProteinName from './proteinName';
-import PrintProvider, { NoPrint, Print } from 'react-easy-print';
-
-
-//import PrintComponent from 'react-print-component';
 
 class Exp extends Component {
   static async getInitialProps(ctx) {
