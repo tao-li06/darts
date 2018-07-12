@@ -277,7 +277,7 @@ class Usergroup extends Component {
           </Panel.Heading>
           <Panel.Body>A study is shared only within the group, and can be edited by group members. Use default settings for DARTS csv files.</Panel.Body>
           <div  style={{alignItems:"center", marginBottom:"20px"}}>
-            <FormGroup style={{float: "left", width:"25%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.name, 255) ? "success" : "error" }>
+            <FormGroup style={{float: "left", width:"30%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.name, 255) ? "success" : "error" }>
               <FormControl
                 type="text"
                 value={this.state.name}
@@ -285,7 +285,7 @@ class Usergroup extends Component {
                 onChange={(e) => this.setState({ name: e.target.value})}
               />
               </FormGroup>
-            <FormGroup style={{float: "left", width:"25%", marginLeft:"5px"}} validationState={validate(this.state.description, 512 * 4) ? "success" : "error" }>
+            <FormGroup style={{float: "left", width:"30%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.description, 512 * 4) ? "success" : "error" }>
                 <FormControl 
                 type="text"
                 value={this.state.description}
