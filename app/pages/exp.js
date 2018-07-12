@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Glyphicon, Label, Pagination, Badge, Button, InputGroup, FormGroup, FormControl } from 'react-bootstrap';
+import { Table, Glyphicon, Label, Pagination, Badge, Button, InputGroup, FormGroup, FormControl, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { getExp } from '../service/darts';
 import cookies from 'next-cookies';
 import withPage from './withPage';
@@ -7,6 +7,10 @@ import { sort } from '../model/record';
 import Chart from '../components/Chart';
 import Palette from '../components/Palette';
 import ProteinName from './proteinName';
+import PrintProvider, { NoPrint, Print } from 'react-easy-print';
+
+
+//import PrintComponent from 'react-print-component';
 
 class Exp extends Component {
   static async getInitialProps(ctx) {
@@ -22,6 +26,7 @@ class Exp extends Component {
     const name = exp.name;
     const headers = exp.headers;
     const label = exp.label;
+    const description = exp.description;
     const key = Object.keys(dataArray);
     var keys = [];
     for(var k in Data) keys.push(k);
@@ -37,6 +42,7 @@ class Exp extends Component {
         name, 
         headers,
         label,
+        description,
         orders,
         dataArray,
         keys
@@ -49,12 +55,27 @@ class Exp extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.rankScore = this.rankScore.bind(this);
+    this.cellFontDown = this.cellFontDown.bind(this);
+    this.cellFontUp = this.cellFontUp.bind(this);
+    this.cellWDown = this.cellWDown.bind(this);
+    this.cellWUp = this.cellWUp.bind(this);
     this.state = {
       selected: 0,
-      value:''
+      value:'',
+      cellWidth:32,
+      cellFont:10,
+      cellHeight:25
     }
   }
-
+  onPrintButtonClick() {
+    //Replace components added
+    PrintComponent.SetPrintContent(this.render());
+    //Add components to list
+    PrintComponent.AddPrintContent(this.render());
+    PrintComponent.AddPrintContent(<div>{"Mulit element"}</div>);
+    //Call this method to print
+    PrintComponent.Print();
+  }
   medianScore(dataSet) {
     var score = 0.0;
     var numOfTotalDP = 1.0;
@@ -110,9 +131,19 @@ class Exp extends Component {
     const { selected } = this.state;
     const { orders } = this.props;
     if ((e.keyCode == 37 || e.keyCode == 33) && selected > 0) {
-      this.setState({selected: selected - 1});
+      this.setState({
+        selected: selected - 1,
+        cellWidth:32,
+        cellFont:10,
+        cellHeight:25
+      });
     } else if ((e.keyCode == 39 || e.keyCode == 34) && selected < orders.length - 1) {
-      this.setState({selected: selected + 1});
+      this.setState({
+        selected: selected + 1,
+        cellWidth:32,
+        cellFont:10,
+        cellHeight:25
+      });
     } else if (e.keyCode == 13 && selected >= 0 && selected < orders.length && !showDetails) {
       this.setState({ showDetails: true});
     }
@@ -130,7 +161,28 @@ class Exp extends Component {
     if(ind != -1)
     this.setState({ selected : ind});
   }
-
+  cellFontUp(){
+    const {cellFont} = this.state;
+    this.setState({ cellFont: Math.min(18, cellFont + 2)});
+  }
+  cellFontDown(){
+    const {cellFont} = this.state;
+    this.setState({ cellFont: Math.max(4, cellFont - 2)});
+  }
+  cellWUp(){
+    const {cellWidth,cellHeight} = this.state;
+    this.setState({ 
+      cellWidth: Math.min(cellWidth + 2, 42),
+      cellHeight: Math.min(cellHeight + 1, 30)
+    });
+  }
+  cellWDown(){
+    const {cellWidth,cellHeight} = this.state;
+    this.setState({ 
+     cellWidth:  Math.max(12, cellWidth - 2),
+      cellHeight: Math.max(12, cellHeight -1)}
+      );
+  }
 
   componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
@@ -142,18 +194,37 @@ class Exp extends Component {
 
   render() {
     
-    const { orders, name, label, headers, dataArray, keys, itemsPerPage,
+    const { orders, name, label, headers, description, dataArray, keys, itemsPerPage,
       normalize, max, min, color1, color1: [h1, l1], color2, color2: [h2, l2] } = this.props;
-    const description = "description does not exist";
-    const { selected } = this.state;
+    const { selected, cellFont, cellWidth, cellHeight } = this.state;
     const currentPage = Math.floor(selected / itemsPerPage);
     const paginationStart = Math.max(0, currentPage - 8);
     const paginationEnd = Math.min(Math.floor((orders.length - 1) / itemsPerPage), currentPage + 8);
     const itemStart = currentPage * itemsPerPage;
-    const proteinID = ' ; ';
-    console.log("Data: parsed dataArray", dataArray ,"selected", selected, "exp: name", name, "label", label,  "headers", headers);
+
+    const tooltipcellFontDown = (
+      <Tooltip id="tooltipcellFontDown">
+        Downsize fontsizes in chart
+      </Tooltip>
+    );
+    const tooltipcellFontUp = (
+      <Tooltip id="tooltipcellFontUp">
+        Upsize fontsizes in chart
+      </Tooltip>
+    );
+    const tooltipcellWUp = (
+      <Tooltip id="tooltipcellWUp">
+        Upsize cell widths
+      </Tooltip>
+    );
+
+    const tooltipcellWDown = (
+      <Tooltip id="tooltipcellWDown">
+        Downsize cell widths
+      </Tooltip>
+    );
     return (
-      <div className="container">
+      <div style={{width:"98%", marginLeft:"3%"}}>
         <style jsx global>{
           `
           th {
@@ -168,36 +239,60 @@ class Exp extends Component {
           .external-link {
             padding-right: 10px;
           }
+          
           `
         }</style>
-        <h3>
-          <Glyphicon style={{color: "Turquoise"}} glyph="object-align-bottom"/>
+        <h3 style={{marginTop: "1px", marginBottom: "1px", fontsSize:"12pt"}}>
+          <Glyphicon style={{color: "Midnightblue"}} glyph="object-align-bottom"/>
           &nbsp;&nbsp;{name}&nbsp;&nbsp;
           {
             label && label.split(',').map((l, i) => <Label style={{marginLeft:"10px"}} key={i}>{l}</Label>)
           }
-          <FormGroup style={{float:"right", width:"150pt", marginRight:"30pt"}}>
+          {/* <Button style={{float:"right",  marginRight:"30px"}} onClick={this.handleClick}>
+           <Glyphicon style={{color: "Black"}} glyph="download-alt"/>
+          </Button> */}
+          <FormGroup style={{float:"right", width:"200px", marginRight:"50px"}}>
             <InputGroup>
               <FormControl type="text" value={this.state.value}  placeholder="Search by Protein ID"  onChange={this.handleChange}/>
               <InputGroup.Button>
-                <Button onClick={this.handleClick}>
+              <Button onClick={this.handleClick}>
                   <Glyphicon glyph="search"/>
                 </Button>
               </InputGroup.Button>
             </InputGroup>
           </FormGroup>
-        </h3>
+          <OverlayTrigger placement="top" overlay={tooltipcellFontUp}>
+            <Button style={{float:"right",  marginRight:"10px"}} onClick={this.cellFontUp}>
+            <Glyphicon style={{color: "Black", fontSize:"11pt"}} glyph="text-size"/>
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={tooltipcellFontDown}>
+            <Button style={{float:"right",  marginRight:"0px"}} onClick={this.cellFontDown}>
+            <Glyphicon style={{color: "Black", fontSize:"8pt"}} glyph="text-size"/>
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={tooltipcellWUp}>
+            <Button style={{float:"right",  marginRight:"10px"}} onClick={this.cellWUp}>
+            <Glyphicon style={{color: "Black"}} glyph="th-large"/>
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={tooltipcellWDown}>
+            <Button style={{float:"right",  marginRight:"0px"}} onClick={this.cellWDown}>
+              <Glyphicon style={{color: "Black"}} glyph="th"/>
+            </Button>
+          </OverlayTrigger>
+       </h3>
         <p className="lead">{description}</p>
         <div className="container" style={{textAlign: "center"}}>
-          <h3><Label>{selected}</Label>&nbsp;<Label bsStyle="success">{keys[orders[selected]]}</Label></h3>
+          <h3 style={{marginTop: "1px", marginBottom: "10px"}}><Label>{selected + 1}</Label>&nbsp;<Label bsStyle="success">{keys[orders[selected]]}</Label></h3>
           <ProteinName proteinIDs={keys[orders[selected]]}/>
           <p> Median* = {this.medianScore(dataArray[orders[selected]])} Rankscore = {this.rankScore(dataArray[orders[selected]])}</p>   
         </div>
 
-        <div style={{display: "flex", flexDirection: "row", paddingLeft: "20px", paddingRight: "20px"}}>
+        <div style={{display: "flex", flexDirection: "row", paddingLeft: "0px", paddingRight: "0px"}}>
           <Palette color1={color1} color2={color2} steps={5} max={max} min={min}/>
-          <Chart style={{width:"100%"}} data={dataArray[orders[selected]]} columns={headers}
-            normalize={normalize} max={max} min={min} color1={color1} color2={color2}/>
+          <Chart style={{marginTop: "10px", marginBottom: "10px", width:"1450px"}} data={dataArray[orders[selected]]} columns={JSON.parse(headers)}
+            normalize={normalize} max={max} min={min} color1={color1} color2={color2} expcellW={this.state.cellWidth} expcellFontSize={this.state.cellFont} expcellH = {this.state.cellHeight}/>
         </div>
         <Table hover condensed  striped responsive>
           <thead>
@@ -205,7 +300,7 @@ class Exp extends Component {
               <th style={{width: "5%"}}>#</th>
               <th style={{width: "30%"}}>Identifier</th>
               <th style={{width: "35%"}}>Details</th>
-              <th style={{width: "30%"}}>Link</th>
+              <th style={{width: "30%"}}>Uniprot Link</th>
             </tr>
           </thead>
           <tbody>
@@ -216,7 +311,7 @@ class Exp extends Component {
               for(let i = itemStart; i < itemsEnd; i++) {
                 children.push(
                   <tr key={i} style={ i === selected ? { background: "lightblue"} : null }>
-                    <th><Badge>{i}</Badge></th>
+                    <th><Badge>{i+1}</Badge></th>
                     <th  onClick={() => this.setState({selected: i, showDetails: true})}><Button bsStyle="link">{keys[orders[i]]}</Button></th>
                     <th/>
                     <th>
@@ -231,7 +326,9 @@ class Exp extends Component {
             })()
           }
           </tbody>
+         
         </Table>
+        
         <div style={{textAlign: "center"}}>
           <Pagination style={{marginLeft: "auto", marginRight: "auto"}}>
             <Pagination.First previous="true" onClick={() => this.setState({selected: 0})}/>
@@ -256,6 +353,7 @@ class Exp extends Component {
             <Pagination.Next next="true" onClick={() => {if(selected + itemsPerPage <= orders.length - 1) this.setState({selected: selected + itemsPerPage})}}/>
             <Pagination.Last next="true" onClick={() => this.setState({selected: orders.length - 1})}/>
           </Pagination>
+          
         </div>
       </div>
     );

@@ -14,13 +14,6 @@ class Usergroups extends Component {
     const { res } = ctx;
    const userGroups = await getUserGroupList(token);
    return { userGroups };
-    // if (!userGroups) {
-    //   return { error: 404 };
-    // } else {
-    //   return {
-    //     userGroups
-    //   };
-    // }
   }
 
   constructor(props) {
@@ -58,7 +51,7 @@ class Usergroups extends Component {
     const { userGroups } = this.props;
 
     return(
-      <div>
+      <div className="container">
         <style jsx global>{`
           th {
             vertical-align: middle !important;
@@ -83,7 +76,7 @@ class Usergroups extends Component {
         )}
         {
           userGroups && userGroups.map((group, index) => (
-            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="warning">
+            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="success">
             <Panel.Heading>
               <Panel.Title componentClass="h3" >
                 <Link href={`/usergroup/${group.id}`}>
@@ -99,7 +92,7 @@ class Usergroups extends Component {
           <Panel.Heading >
             <Panel.Title componentClass="h3">Create a User Group</Panel.Title>
           </Panel.Heading>
-          <Panel.Body>User Groups are used to manage your team members' access to studies. A study can only be viewed and edited by authorized users.</Panel.Body>
+          <Panel.Body>User Groups are used to manage your team members' access to studies. A study can only be viewed and edited by users within the group.</Panel.Body>
             <div  style={{alignItems:"center", marginBottom:"20px"}}>
             <FormGroup style={{float: "left", width:"30%", marginLeft:"20px", marginBottom:"20px"}} validationState={validate(this.state.name, 255) ? "success" : "error" }>
               <FormControl
@@ -117,7 +110,7 @@ class Usergroups extends Component {
                 onChange={(e) => this.setState({ description: e.target.value})}
               />
             </FormGroup>
-            <Glyphicon style={{ float: "left", marginLeft:"15px", color:"#4A7443", fontSize: "27px"}} glyph="plus" onClick={this.addUserGroup} />
+            <Glyphicon style={{ float: "left", marginLeft:"15px", color:"Midnightblue", fontSize: "27px"}} glyph="plus" onClick={this.addUserGroup} />
           </div>
         </Panel>
       </div>

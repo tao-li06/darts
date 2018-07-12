@@ -13,7 +13,9 @@ const publicPath = [
   '/how-it-works/',
   '/our-team/',
   '/our-team',
-  '/about-us'
+  '/contact-us',
+  '/contact-us/'
+
 ]
 
 app.prepare().then(() => {
@@ -38,7 +40,7 @@ app.prepare().then(() => {
   server.get('/', (req, res) => {
     if (req.cookies['token']) {
       res.writeHead(302, {
-        Location: `/usergroups`
+        Location: `/usergroup`
       })
       res.end();
       res.finished = true;
@@ -86,6 +88,11 @@ app.prepare().then(() => {
   });
 
 
+  server.get('/Introduction', (req, res) => {
+    return app.render(req, res, '/Introduction', {
+      ...req.query,
+    })
+  });
 
 
 

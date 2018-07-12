@@ -7,6 +7,7 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      invitationCode: darts123
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -20,8 +21,8 @@ class Register extends Component {
   }
 
   render(){
-    const { username, password, confirmPassword, email, company, answer } = this.state;
-    let invalid = username && password && confirmPassword && email && company && (answer == 5) && (password === confirmPassword) ;
+    const { username, password, confirmPassword, email, company, answer, invitationCode} = this.state;
+    let invalid = username && password && confirmPassword && email && company && (answer == invitationCode) && (password === confirmPassword) ;
     return(
       <form>
       <FormGroup style={{ backgroundColor: "white",
@@ -70,10 +71,10 @@ class Register extends Component {
           onChange={(e) => this.setState({ company: e.target.value})}
         />
         <FormControl.Feedback />
-        <ControlLabel>Security Question</ControlLabel>
+        <ControlLabel>Invitation code</ControlLabel>
         <FormControl
           type="text"
-          placeholder="How many letters are there in 'DARTS'"
+          placeholder="Invitation code"
           onChange={(e) => this.setState({ answer: e.target.value})}
           value={answer}
         />

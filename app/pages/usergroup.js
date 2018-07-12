@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import withPage from './withPage';
-import { getStudyList, addStudy, getUser, getLoggedInfo, getUsersOfGroup, deleteUserGroup, login, addUserToGroup, deleteUserFromGroup } from '../service/darts';
-import {  Glyphicon, FormControl, FormGroup, Panel, Modal, Button, Table, Checkbox} from 'react-bootstrap';
+import { getStudyList, addStudy, getGroupInfo, getLoggedInfo, getUsersOfGroup, deleteUserGroup, login, addUserToGroup, deleteUserFromGroup } from '../service/darts';
+import {  Glyphicon, FormControl, FormGroup, Panel, Modal, Button, Table, Checkbox, Alert} from 'react-bootstrap';
 import Router from 'next/router';
 import cookies from 'next-cookies';
 import { ScaleLoader} from 'react-spinners';
@@ -17,8 +17,9 @@ class Usergroup extends Component {
     const groupid = req.params.id;
     const studyLists = await getStudyList(groupid, token);
     const userList = await getUsersOfGroup(groupid, token);
+    const gName = await getGroupInfo(groupid, token);
     const sysAdmin = is_admin == "true" ? true : false;
-    var isGroupAdmin = false;
+    var isGroupAdmin = true;
     for(let i = 0; i < userList.length; i++) {
       if(userList[i].id == id && userList[i].isAdmin == true)
         isGroupAdmin = true;
@@ -34,7 +35,8 @@ class Usergroup extends Component {
         id, 
         sysAdmin,
         isGroupAdmin,
-        groupid
+        groupid,
+        gName
       };
     }
   
@@ -44,6 +46,7 @@ class Usergroup extends Component {
       adding: false,
       show: false,
       adduserAdmin: false,
+      showDeleteGroup: false,
     };
     this.addAStudy = this.addAStudy.bind(this);
     this.deleteGroup = this.deleteGroup.bind(this);
@@ -53,6 +56,8 @@ class Usergroup extends Component {
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
     this.addUser = this.addUser.bind(this);
     this.deleteUserFGroup = this.deleteUserFGroup.bind(this);
+    this.handleDismiss = this.handleDismiss.bind(this);
+    this.handleDeleteShow = this.handleDeleteShow.bind(this);
 
     //this.freshPage = this.freshPage.bind(this);
   }
@@ -65,13 +70,21 @@ class Usergroup extends Component {
     this.setState({ show: true });
   }
 
+  handleDismiss() {
+    this.setState({ showDeleteGroup: false });
+  }
+
+  handleDeleteShow() {
+    const {showDeleteGroup} = this.state;
+    this.setState({ showDeleteGroup: !showDeleteGroup });
+  }
   //checked
   async addAStudy() {
-    const { studyname, description } = this.state;
+    const { name, description } = this.state;
     const { groupid, token } = this.props;
-    if (validate(studyname, 255) && validate(description, 512 * 4)) {
+    if (validate(name, 255) && validate(description, 512 * 4)) {
       this.setState({ adding: true });
-      const ok = await addStudy(studyname, description, groupid, token);
+      const ok = await addStudy(name, description, groupid, token);
       this.setState({ adding: false });
       if (ok) {
         this.freshPage();
@@ -121,11 +134,11 @@ class Usergroup extends Component {
   }
 
   render(){
-    const { studyLists, adding, userList, sysAdmin, isGroupAdmin, id, username, groupid} = this.props;
-    
+    const { studyLists, adding, userList, sysAdmin, isGroupAdmin, id, gName, groupid} = this.props;
+    const {showDeleteGroup} = this.state;
     //todo?
     return(
-      <div>
+      <div className="container">
         <style jsx global>{`
           th {
             vertical-align: middle !important;
@@ -139,16 +152,19 @@ class Usergroup extends Component {
         `}</style>
         
         <h3 style={{color: "Black", width:"97.5%", float:"left"}}>
-            &nbsp;&nbsp; List Of Studies 
+            {gName.name}
+            
             <Button style={{color: "Darkgreen", float:"right"}} onClick={this.handleShow}>User Management &nbsp;
               <Glyphicon  glyph="user"/>
             </Button>
             {sysAdmin ? (
-              <Button style={{color: "MidnightBlue", float:"right", marginRight:"10px" }} onClick={this.deleteGroup}>Delete Usergroup &nbsp;
+              <Button style={{color: "MidnightBlue", float:"right", marginRight:"10px" }} onClick={this.handleDeleteShow}>Delete User Group &nbsp;
                 <Glyphicon  glyph="trash"/>
               </Button> )
-              : <div/> }
+              : null }
         </h3>
+        <p>{gName.description}</p>
+        
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>User Management</Modal.Title>
@@ -177,9 +193,7 @@ class Usergroup extends Component {
                     user.isAdmin ? <Glyphicon style={{color:"darkgreen", marginLeft:"20px"}} glyph="ok"/> : null
                   }
                   {
-                    sysAdmin ?  <Glyphicon  style={{color:"darkred", marginLeft:"20px"}} glyph="remove" onClick ={ 
-                      ()=> {this.setState({deleteName: user.name});
-                            this.deleteUserFGroup(); } }/> : null
+                    sysAdmin ?  <Glyphicon  style={{color:"darkred", marginLeft:"20px"}} glyph="remove" /> : null
                   }
                 </td>
               </tr>
@@ -225,9 +239,27 @@ class Usergroup extends Component {
           </div>
         )}
         
+        <div>
+        { showDeleteGroup ?
+          <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
+            <h4>Confirm to delete</h4>
+            <p>
+              The user group and all of its content will be deleted permanently and cannot be retrieved. Please confirm to continue.
+            </p>
+            <p>
+              <Button onClick ={ ()=> { this.deleteGroup(); } }
+                 bsStyle="danger">Delete</Button>
+              <span> &nbsp; </span>
+              <Button onClick={this.handleDismiss}>Cancel</Button>
+            </p>
+          </Alert>
+          : null
+        }
+        </div>
+
         {
           studyLists && studyLists.map((study, index) => (
-            <Panel style={{float: "left", width:"32%", marginRight:"10px"}} key={index} bsStyle="primary">
+            <Panel bsStyle="primary" style={{float: "left", width:"32%", marginRight:"10px"}} key={index} >
             <Panel.Heading>
               <Panel.Title componentClass="h3" >
                 <Link href={`${groupid}/study/${study.id}`}>
@@ -239,7 +271,7 @@ class Usergroup extends Component {
             </Panel>
           ))
         }
-        <Panel bsStyle="info" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
+        <Panel bsStyle="success" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
           <Panel.Heading >
             <Panel.Title componentClass="h3">Create a Study</Panel.Title>
           </Panel.Heading>
@@ -261,7 +293,7 @@ class Usergroup extends Component {
                 onChange={(e) => this.setState({ description: e.target.value})}
               />
             </FormGroup>
-            <Glyphicon style={{ float: "left", marginLeft:"15px", color:"black", fontSize: "27px"}} glyph="plus" onClick={this.addAStudy} />
+            <Glyphicon style={{ float: "left", marginLeft:"15px", color:"Darkgreen", fontSize: "27px"}} glyph="plus" onClick={this.addAStudy} />
           </div>
         </Panel>
       </div>

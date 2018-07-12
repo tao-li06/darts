@@ -139,10 +139,25 @@ export const sort = (data, rankingType) => {
     //else 
       //scoreMap[keys[i]] = rankScore(data[keys[i]]);
   }
-  console.log("scoremap", scoreMap, "idlist", idList);
   persistedData.scores = scoreMap;
   return idList.sort((a,b) => scoreMap[b] - scoreMap[a]);
 }
+
+export const sortKeys = (Rawkeys) => Rawkeys.sort(
+  (a, b) => {
+    var regExp = /\[(\d{1,4})-(\d{1,4})\]\ \[(.*)\]/;
+    var strA = regExp.exec(a);
+    var strB = regExp.exec(b);
+    if(strA[1].length === strB[1].length) {
+      var sA = parseInt(strA[1]) * 100000 + parseInt(strA[2]) * 100 + strA[3].length;
+      var sB = parseInt(strB[1]) * 100000 + parseInt(strB[2]) * 100 + strB[3].length;
+
+      return ( sA === sB) ? 0  : (sA < sB )?  -1 : 1;   
+    } else {
+      return strA[1].length < strB[1].length ? -1 : 1;
+    }
+  }
+);
 
 export {
   persistedData

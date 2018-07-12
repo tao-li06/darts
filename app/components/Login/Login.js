@@ -42,7 +42,7 @@ class Login extends Component {
        
       <form className="login">
       <style jsx global>{`.login {
-  background-color: white;
+  background-color: white ;
   padding: 30px;
   display: flex;
   flex-direction: column;

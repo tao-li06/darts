@@ -35,6 +35,22 @@ export const getUserGroupList = async(token = Cookies.get('token')) => {
   return ugList.ok && ugList.json();
 }
 
+export const getGroupInfo = async(gID, token = Cookies.get('token')) => {
+  const res = await fetch(`${endpoint()}/api/group/${gID}`,
+    {
+      headers: {
+        Authorization: token,
+        "Accept": "application/json",
+      },
+      credentials: 'include',
+      method: "GET",
+      mode: "cors",
+    }
+  );
+  if(!res.ok) return null;
+    const json = await res.json();
+    return res.ok && json;
+}
 
 export const addGroup = async (name, description, token = Cookies.get('token')) => {
   const res = await fetch(`${endpoint()}/api/groups`,
@@ -86,7 +102,6 @@ export const getUsersOfGroup = async(id, token = Cookies.get('token')) => {
 
 export const addUserToGroup = async(id, name, setAsAdmin, token = Cookies.get('token')) => {
   const is_admin = setAsAdmin.toString();
-  console.log(id, name, is_admin, token);
   const res = await fetch(`${endpoint()}/api/group/${id}/users`,
     {
       headers : {
@@ -181,19 +196,16 @@ export const deleteStudy = async (group_id, study_id, token = Cookies.get('token
   {
     headers: {
       Authorization: token,
-      "Accept": "application/json",
+      "Content-Type": "application/json",
     },
     credentials: 'include',
     method: "DELETE",
     mode: "cors"
   });
-  if(!res.ok) return null;
-  const json = await res.json();
-  return res.ok && json;
+  return res.ok;
 }
 
 export const uploadExp = async (groupid, name, label, headers, description, data, studyid, token = Cookies.get('token')) => {
-  console.log("uploadExp called", groupid, name, label, headers, description, data, studyid, token);
   const res = await fetch(`${endpoint()}/api/group/${groupid}/study/${studyid}/experiments`,
     {
       headers: {
@@ -212,7 +224,6 @@ export const uploadExp = async (groupid, name, label, headers, description, data
       method: "POST",
       mode: "cors",
     });
-    console.log("sent")
   return res.ok;
 }
 
@@ -227,7 +238,7 @@ export const getExp = async (group_id, study_id, experimentid, token = Cookies.g
       method: "GET",
       mode: "cors"
     });
-  if (!res.ok) return null;
+  if(!res.ok) return null;
   const json = await res.json();
   return res.ok && json;
 }
@@ -263,7 +274,6 @@ export const canUseUsername = async (name, token = Cookies.get('token')) => {
 
 export const addUser = async (name, password, email, description) => {
   const is_admin = "false";
-  console.log(name, password, email, description, is_admin);
   const res = await fetch(`${endpoint()}/api/users`,
   {
     headers:{

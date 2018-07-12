@@ -57,6 +57,21 @@ class OurTeam extends Component {
             </p>
           </div>
       </div>
+      <br/>
+      <br/>
+      <div style={{ color: "#ededed" }}>
+          <div style={{ fontSize: "14pt", fontFamily:"helvetica neue"}}>
+            <header style={{ fontSize: "16pt"}}> XIANG YIN</header>
+            <p/>
+            <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Co-Founder
+            </p>
+            <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </p>
+          </div>
+          <br/> <br/>
+      </div>
     
     </React.Fragment>
     )

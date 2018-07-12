@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { color } from '../../model/palette';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip, FormGroup, Button, FormControl, InputGroup, Glyphicon } from 'react-bootstrap';
+import print from '../../model/svg';
 
 class Chart extends Component {
   constructor(props) {
@@ -10,42 +11,55 @@ class Chart extends Component {
       selectedColumn: -1,
     }
     this.sortKeys = this.sortKeys.bind(this);
+    // this.export = this.export.bind(this);
   }
 
   componentWillMount() {this.sortKeys(this.props);}
 
-  componentWillReceiveProps(props) {this.sortKeys(props);}
+  componentWillReceiveProps(props) {this.sortKeys(props);
+    // if (window === undefined) return;
+  }
+
+  // componentDidMount() {
+  //   if (window === undefined) return;
+  //   this.export(this.props);
+  // }
 
   sortKeys(props){
     const {data} = props;
-    console.log("data in Chartjs 22",data);
     const Rawkeys = Object.keys(data);
     if(Rawkeys) {
-    var keys = Rawkeys.sort(
-      function(a,b) {
-        var regExp = /\[(\d{1,4})-(\d{1,4})\]\ \[(.*)\]/;
-        var strA = regExp.exec(a);
-        var strB = regExp.exec(b);
-        if(strA[1].length === strB[1].length) {
-          var sA = parseInt(strA[1]) * 100000 + parseInt(strA[2]) * 100 + strA[3].length;
-          var sB = parseInt(strB[1]) * 100000 + parseInt(strB[2]) * 100 + strB[3].length;
+      var keys = Rawkeys.sort(
+        function(a,b) {
+          var regExp = /\[(\d{1,4})-(\d{1,4})\]\ \[(.*)\]/;
+          var strA = regExp.exec(a);
+          var strB = regExp.exec(b);
+          if(strA[1].length === strB[1].length) {
+            var sA = parseInt(strA[1]) * 100000 + parseInt(strA[2]) * 100 + strA[3].length;
+            var sB = parseInt(strB[1]) * 100000 + parseInt(strB[2]) * 100 + strB[3].length;
 
-          return ( sA === sB) ? 0  : (sA < sB )?  -1 : 1;   
-        } else return strA[1].length < strB[1].length ? -1 : 1;
-        
-      }
-    );
-    this.setState({keys:keys});
+            return ( sA === sB) ? 0  : (sA < sB )?  -1 : 1;   
+          } else return strA[1].length < strB[1].length ? -1 : 1;
+          
+        }
+      );
+      this.setState({keys:keys});
+    }
   }
-  }
+
+  // export(props) {
+  //   const { data, columns } = props;
+  //   const s = print(data, columns);
+  //   console.log(s);
+  // }
+
 
   render() {
     const {
       headerWidth,
       maxNameCharLength,
-      nameFontSize,
-      cellW,
-      cellH,
+      
+      expcellH,
       normalize,
       max,
       min,
@@ -53,33 +67,39 @@ class Chart extends Component {
       columns,
       color1: [h1, l1],
       color2: [h2, l2],
-      style
+      style,
+      expcellW, 
+      expcellFontSize
     } = this.props;
+    const cellW = expcellW != undefined ?  expcellW : 32;
+    
+    const cellH = expcellH != undefined ? expcellH : 25;
+    const cellFontSize = expcellFontSize ? expcellFontSize : 10;
+    const nameFontSize = cellFontSize + 2;
     const nameHeight = maxNameCharLength * nameFontSize * 0.52;
     const {keys} = this.state;
     const len = keys.length;
-    const columnS = JSON.parse(columns);
-    console.log("Reached chart.js, this is the data:", data);
     return (
       <div style={{display: "flex", overflow: "hidden", ...style}}>
-        <svg width={headerWidth} height={cellH * columnS.length + nameHeight}>
+        <svg width={headerWidth} height={cellH * columns.length + nameHeight}>
           <g transform={`translate(0, 0)`}>
             {
-              columnS.map((column, index) => (
-                <text key={index} x={headerWidth / 2} y={ cellH * (index) + cellH / 2} textAnchor="middle"  alignmentBaseline="central">{column}</text>
+              columns.map((column, index) => (
+                <text key={index} x={headerWidth / 2} y={ cellH * (index) + cellH / 2} textAnchor="left"  alignmentBaseline="central">{column}</text>
               ))
             }
           </g>
         </svg>
-        <div style={{overflowX: "auto", width: "calc(100% - 80px)", height:"450px"}}>
-          <svg width={cellW * len} height="1000px">
+
+        <div style={{overflow: "auto", width: "calc(100% - 80px)", height:"720px", marginLeft:"5px"}}>
+          <svg width={cellW * len} height="600px">
             {
               keys.map((rowIndex, rowItemIndex) => {
                 const row = data[rowIndex];
                 return (
-                  <g key={rowItemIndex} transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columnS.length * cellH + nameHeight}>
+                  <g key={rowItemIndex} transform={`translate(${cellW * (rowItemIndex)}, 0)`} height={columns.length * cellH + nameHeight}>
                     {// v = row[i], row
-                      Object.keys(row).map((i) => {
+                      keys && Object.keys(row).map((i) => {
                         const v = row[i];
                         const value = normalize(v);
                         const percent = (value >= max || value <= min) ? 1 : (value > 0) ? value / max : value / min;
@@ -88,7 +108,7 @@ class Chart extends Component {
                             <g key={i} transform={`translate(0, ${cellH * (i)})`} >
                               <rect width={cellW} height={cellH}
                                 fill={value > 0 ? color(h1, l1, percent) : color(h2, l2, percent)}/>
-                              <text fill={Math.abs(value) > 0.6? "white":"black" } x={cellW / 2} y={cellH / 2} fontSize={10} textAnchor="middle" alignmentBaseline="central">{v.toFixed(2)}</text>
+                              <text fill={Math.abs(value) > 0.6? "white":"black" } x={cellW / 2} y={cellH / 2} fontSize={cellFontSize} textAnchor="middle" alignmentBaseline="central">{(v >= 10? v.toFixed(0) : ( v < 0.1 ? v.toFixed(2) : v.toFixed(1)))}</text>
                             </g>
                           </OverlayTrigger>);
                         }
@@ -96,8 +116,8 @@ class Chart extends Component {
                     }
                     {
                       <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip'>{rowIndex}</Tooltip>}>
-                        <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columnS.length} 
-                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columnS.length})`}>{/*rowIndex > 
+                        <text fontSize={`${nameFontSize}px`} x={cellW / 2 - (nameFontSize / 2)} y = {cellH * columns.length} 
+                          transform={`rotate(90 ${cellW / 2 - (nameFontSize / 2)}, ${cellH * columns.length})`}>{/*rowIndex > 
                           maxNameCharLength ? `${rowIndex.substring(0, maxNameCharLength - 3)}...` : */ rowIndex}
                         </text>
                       </OverlayTrigger>
@@ -115,11 +135,9 @@ class Chart extends Component {
 }
 
 Chart.defaultProps = {
-  headerWidth: 80,
+  headerWidth: 30,
   maxNameCharLength: 22,
-  nameFontSize: 14,
-  cellH: 30,
-  cellW: 35,
+  nameFontSize: 11,
   normalize: (v) => Math.log2,
   max: 2,
   min: -2,
