@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Label, Glyphicon, Table, FormGroup, FormControl} from 'react-bootstrap';
-import { getStudyInfo, deleteExp, uploadExp} from '../service/darts';
+import { Alert, Button, Label, Glyphicon, Table, FormGroup, FormControl} from 'react-bootstrap';
+import { getStudyInfo, deleteExp, uploadExp, deleteStudy} from '../service/darts';
 import withPage from './withPage';
 import Link from 'next/link';
 import cookies from 'next-cookies';
 import { ScaleLoader } from 'react-spinners';
 import retrieve, { sort } from '../model/record';
+import Router from 'next/router';
 
 const validate = (s, l) => s && s.length <= l;
 
@@ -33,11 +34,24 @@ class Study extends Component {
       groupby: 'Master Protein Accessions',
       identifier: 'Positions in Master Proteins',
       modification: 'Modifications',
+      showDeleteStudy: false
     }
     this.openFile = this.openFile.bind(this);
     this.onFileSelected = this.onFileSelected.bind(this);
     this.submit = this.submit.bind(this);
     this.trash = this.trash.bind(this);
+    this.handleDeleteShow = this.handleDeleteShow.bind(this);
+    this.handleDismiss = this.handleDismiss.bind(this);
+    this.deleteAStudy = this.deleteAStudy.bind(this);
+  }
+
+  handleDismiss() {
+    this.setState({ showDeleteStudy: false });
+  }
+
+  handleDeleteShow() {
+    const {showDeleteStudy} = this.state;
+    this.setState({ showDeleteStudy: !showDeleteStudy });
   }
 
   openFile() {
@@ -59,7 +73,16 @@ class Study extends Component {
     } else {
       alert('Fail to delete.');
     }
-  
+  }
+
+  async deleteAStudy() {
+    const {groupid, studyid, token} = this.props;
+    const result = await deleteStudy(groupid, studyid, token);
+    if(result) {
+      Router.push(`/usergroup/${groupid}`);
+    } else {
+      alert('Fail to delete the study.');
+    }
   }
 
   async submit() {
@@ -77,7 +100,6 @@ class Study extends Component {
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     try {
       const data = await retrieve(file, new RegExp(headerFormat), groupby, identifier, modification);
-      console.log(JSON.stringify(data));
       const ok = await uploadExp(groupid, name, label, data.columns, description, data.items, studyid, token);
       if (ok) {
         this.setState({
@@ -110,8 +132,7 @@ class Study extends Component {
 
   render() {
     const { studyid, groupid, studyInfo, token  } = this.props;
-    
-    const { adding} = this.state;
+    const { adding, showDeleteStudy } = this.state;
     const { fileName} = this.state;
     return(
     <div className="container">
@@ -136,17 +157,39 @@ class Study extends Component {
         }
         `
       }</style>
-      <h3><Glyphicon style={{color: "Turquoise"}} glyph="folder-open"/>&nbsp;&nbsp;{studyInfo.name}</h3>
+      <Button style={{color: "MidnightBlue", float:"right", marginRight:"10px" }} onClick={this.handleDeleteShow}>Delete Study &nbsp;
+        <Glyphicon  glyph="trash"/>
+      </Button> 
+      <h3><Glyphicon style={{color: "Navy"}} glyph="folder-open"/>&nbsp;&nbsp;{studyInfo.name}</h3>
       <p className="lead">{studyInfo.description}</p>
       <p className="paragraph-last">List of Experiments in the Study</p>
+
+      <div>
+        { showDeleteStudy ?
+          <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
+            <h4>Confirm to delete</h4>
+            <p>
+              Only managers of the group can delete a study. The study and all of its content will be deleted permanently and cannot be retrieved. Please confirm to continue.
+            </p>
+            <p>
+              <Button onClick ={ ()=> { this.deleteAStudy(); } }
+                 bsStyle="danger">Delete</Button>
+              <span> &nbsp; </span>
+              <Button onClick={this.handleDismiss}>Cancel</Button>
+            </p>
+          </Alert>
+          : null
+        }
+        </div>
+
       <Table hover condensed  striped responsive>
           <thead>
             <tr>
               <th style={{width: "1%"}}>#</th>
               <th style={{width: "15%"}}>Name</th>
-              <th style={{width: "9%"}}>Label</th>
+              <th style={{width: "15%"}}>Label</th>
               <th style={{width: "30%"}}>Description</th>
-              <th style={{width: "40%"}}></th>
+              <th style={{width: "26%"}}></th>
               
             </tr>
           </thead>
@@ -169,7 +212,7 @@ class Study extends Component {
                     {exp.description}
                   </th>
                   <th>  
-                    <Button bsSize="large" bsStyle="link" onClick={()=> this.trash(groupid, studyid, exp.id, token)} >
+                    <Button style={{float:"right", marginRight:"50px"}}bsSize="large" bsStyle="link" onClick={()=> this.trash(groupid, studyid, exp.id, token)} >
                             <Glyphicon glyph="trash" style={{color:"#0E4D92"}}/>
                     </Button> 
                   </th>
@@ -193,7 +236,7 @@ class Study extends Component {
                         <FormControl
                             type="text"
                             value={this.state.name}
-                            placeholder="Enter Name"
+                            placeholder="Name"
                             onChange={(e) => this.setState({ name: e.target.value})}
                           />
                       </FormGroup>
@@ -204,7 +247,7 @@ class Study extends Component {
                         <FormControl
                             type="text"
                             value={this.state.label}
-                            placeholder="Enter Labels, e.g. 2018-07-05, Mouse"
+                            placeholder="e.g. 2018-07-05, Mouse"
                             onChange={(e) => this.setState({ label: e.target.value})}
                           />
                         </FormGroup>
@@ -215,7 +258,7 @@ class Study extends Component {
                         <FormControl
                             type="text"
                             value={this.state.description}
-                            placeholder="Enter description, e.g. successful run"
+                            placeholder="Description, e.g. successful run"
                             onChange={(e) => this.setState({ description: e.target.value})}
                           />
                         </FormGroup>

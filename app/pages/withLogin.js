@@ -63,13 +63,13 @@ const withLogin = (WrappedComponent) => {
             </Nav>
           </Navbar>
 
-          <Modal show={this.state.showCreateAccount} onHide={this.handleHideCreateUserInterface} style={{marginTop: "100px"}}>
+          <Modal show={this.state.showCreateAccount} onHide={this.handleHideCreateUserInterface} style={{ marginTop: "100px"}}>
             <Modal.Header closeButton>
               <Modal.Title style={{fontSize:"20pt"}}>Register</Modal.Title>
             </Modal.Header>
             <Register />
           </Modal> 
-          <Modal show={this.state.show} onHide={this.handleHide} style={{marginTop: "100px"}}>
+          <Modal show={this.state.show} onHide={this.handleHide} style={{marginLeft:"500px",width:"330px", marginTop: "100px"}}>
             <Modal.Header closeButton>
               <Modal.Title>Login to DARTS workstation</Modal.Title>
             </Modal.Header>

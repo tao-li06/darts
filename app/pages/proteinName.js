@@ -24,10 +24,16 @@ class ProteinName extends Component {
     const IDarray = proteinIDs.split(';').map( i => i.trim());
     var fullDisplay = [];
     for(let i = 0; i < IDarray.length; i++ ) {
-      const proteinJSON = (await this.getProteinInfo(IDarray[i])).protein;
+      const proteinJSON = (await this.getProteinInfo(IDarray[i]));
       fullDisplay[i] = {
         id: IDarray[i],
-        name: proteinJSON.recommendedName ? proteinJSON.recommendedName.fullName.value : proteinJSON.submittedName[0].fullName.value
+        ID: proteinJSON.id,
+        name: proteinJSON.protein && proteinJSON.protein.recommendedName ? 
+          ("RecommendedName: ") + proteinJSON.protein.recommendedName.fullName.value : 
+          (proteinJSON.submittedName && proteinJSON.submittedName[0].fullName ? 
+            ("SubmittedName: ") + proteinJSON.submittedName[0].fullName.value : "Cannot get name"),
+        shortname: proteinJSON.protein && proteinJSON.protein.recommendedName && proteinJSON.protein.recommendedName.shortName ? 
+          ("ShortName: ") + proteinJSON.protein.recommendedName.shortName[0].value : "-",
       };
     }
     this.setState({ displayedInfo : fullDisplay });
@@ -47,7 +53,7 @@ class ProteinName extends Component {
       <div>
       {
         displayedInfo.map((d) => {
-          return <a key={d.id} href={`https://www.uniprot.org/uniprot/${d.id}`} target="_blank">[{d.id} : {d.name}]  </a>;
+        return (<a key={d.id} target="_blank"  href={`https://www.uniprot.org/uniprot/${d.id}`} >[{d.id}] [{d.ID}] [{d.name}] [{d.shortname}]<br/>  </a>);
         })
       }
       </div>

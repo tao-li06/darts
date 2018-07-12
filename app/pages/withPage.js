@@ -38,21 +38,25 @@ const withPage = (WrappedComponen) => {
         <div>
           <Navbar collapseOnSelect>
             <Navbar.Header>
-              <Navbar.Brand>
+              <Navbar.Brand >
                 <a className="navbar-brand"  href="/">DARTS Platform</a>
               </Navbar.Brand>
             </Navbar.Header>
             <Nav bsStyle="pills">
               <NavItem eventKey={1} onClick={() => Router.push("/usergroups")}>
-                UserGroups
+                User Groups
+              </NavItem>
+            </Nav>
+            <Nav bsStyle="pills">
+              <NavItem eventKey={2} onClick={() => Router.push("/Introduction")}>
+                Introduction
               </NavItem>
             </Nav>
             <Nav pullRight>
               <NavItem onClick={this.logout}>Log Out</NavItem>
             </Nav>
           </Navbar>
-          <div className="container">
-            <Breadcrumb>
+            <Breadcrumb style={{width:"90%", marginLeft:"5%"}}>
               {
                 dirs.map((d, index) => <Breadcrumb.Item key={index} 
                 
@@ -63,8 +67,9 @@ const withPage = (WrappedComponen) => {
                 </Breadcrumb.Item>)
               }
             </Breadcrumb>
-            <WrappedComponen {...this.props} />
-          </div>
+            <div >
+              <WrappedComponen {...this.props} />
+            </div>
         </div>
       );
     }
