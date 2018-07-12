@@ -50,7 +50,7 @@ class OurTeam extends Component {
             <header style={{ fontSize: "16pt"}}> BRETT LOMENICK, Ph.D.</header>
             <p/>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Co-Founder, Chief Technology Officer
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Co-Founder, Chief Technology Officer
             </p>
             <p>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Spearheaded the development of the Drug Affinity Responsive Target Stability (DARTS) method for small molecule target identification.
@@ -64,7 +64,7 @@ class OurTeam extends Component {
             <header style={{ fontSize: "16pt"}}> XIANG YIN</header>
             <p/>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Co-Founder
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Co-Founder, 
             </p>
             <p>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

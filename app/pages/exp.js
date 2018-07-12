@@ -246,7 +246,7 @@ class Exp extends Component {
           <Glyphicon style={{color: "Midnightblue"}} glyph="object-align-bottom"/>
           &nbsp;&nbsp;{name}&nbsp;&nbsp;
           {
-            label && label.split(',').map((l, i) => <Label style={{marginLeft:"10px"}} key={i}>{l}</Label>)
+            label && label.split(',').map((l, i) => <Label bsStyle="primary" style={{marginLeft:"10px"}} key={i}>{l}</Label>)
           }
           {/* <Button style={{float:"right",  marginRight:"30px"}} onClick={this.handleClick}>
            <Glyphicon style={{color: "Black"}} glyph="download-alt"/>

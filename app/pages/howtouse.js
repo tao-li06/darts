@@ -12,12 +12,13 @@ class HowToUse extends Component {
   static async getInitialProps(ctx){
 
   }
-  
+
   render() {
     return (
-          <div style={{ color: "white" }}>
-              <PageHeader >How It Works</PageHeader>
-              
+          <div style={{ marginLeft:"5%", color: "Black" }}>
+              <PageHeader >How to use DARTS platform</PageHeader>
+              <Image style={{width:"80%", marginLeft:"8%"}} src="/static/images/tut1.png" className='diagram'/>
+              <Image style={{width:"80%", marginLeft:"8%"}} src="/static/images/tut2.png" className='diagram'/>
           </div>
       
     );
