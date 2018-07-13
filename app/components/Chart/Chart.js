@@ -75,7 +75,7 @@ class Chart extends Component {
     
     const cellH = expcellH != undefined ? expcellH : 25;
     const cellFontSize = expcellFontSize ? expcellFontSize : 10;
-    const nameFontSize = cellFontSize + 2;
+    const nameFontSize = cellFontSize + 3;
     const nameHeight = maxNameCharLength * nameFontSize * 0.52;
     const {keys} = this.state;
     const len = keys.length;

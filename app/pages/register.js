@@ -7,7 +7,7 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      invitationCode: darts123
+      invitationCode: "darts123"
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -34,7 +34,7 @@ class Register extends Component {
                           marginTop: "20px",
                           marginBottom:"20px"
                         }}
-          controlId="formBasicText"
+          
       >
         <ControlLabel>Username</ControlLabel>
         <FormControl
