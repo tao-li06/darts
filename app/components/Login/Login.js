@@ -38,7 +38,7 @@ class Login extends Component {
   render() {
     const { username, password, invalid } = this.state;
     return (
-      <div style={{height:"300px", width:"300px"}}> 
+      <div style={{width:"300px"}}> 
        
       <form className="login">
       <style jsx global>{`.login {

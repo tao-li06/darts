@@ -117,16 +117,16 @@ class Usergroup extends Component {
   async addUser() {
     const { groupid, token } = this.props;
     const { addingName, adduserAdmin } = this.state;
-    const ok = await addUserToGroup(groupid, addingName, adduserAdmin, token);
+    
+      const ok = addingName && await addUserToGroup(groupid, addingName, adduserAdmin, token);
     if(ok) {
       this.freshPage();
       this.handleShow();
     }
   }
 
-  async deleteUserFGroup() {
+  async deleteUserFGroup(deleteName) {
       const {groupid, token} = this.props;
-      const {deleteName} = this.state;
       const ok = await deleteUserFromGroup(groupid, deleteName, token);
       if(ok) {
         this.freshPage();
@@ -193,7 +193,7 @@ class Usergroup extends Component {
                     user.isAdmin ? <Glyphicon style={{color:"darkgreen", marginLeft:"20px"}} glyph="ok"/> : null
                   }
                   {
-                    sysAdmin ?  <Glyphicon  style={{color:"darkred", marginLeft:"20px"}} glyph="remove" /> : null
+                    sysAdmin ?  <Glyphicon   style={{color:"darkred", marginLeft:"20px"}} glyph="remove" onClick={() => this.deleteUserFGroup(user.name)} /> : null
                   }
                 </td>
               </tr>
