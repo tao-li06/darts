@@ -160,7 +160,7 @@ class Study extends Component {
       <Button style={{color: "MidnightBlue", float:"right", marginRight:"10px" }} onClick={this.handleDeleteShow}>Delete Study &nbsp;
         <Glyphicon  glyph="trash"/>
       </Button> 
-      <h3><Glyphicon style={{color: "Navy"}} glyph="folder-open"/>&nbsp;&nbsp;{studyInfo.name}</h3>
+      <h3><Glyphicon style={{color: "#1ABC9C"}} glyph="folder-open"/>&nbsp;&nbsp;{studyInfo.name}</h3>
       <p className="lead">{studyInfo.description}</p>
       <p className="paragraph-last">List of Experiments in the Study</p>
 
@@ -224,7 +224,7 @@ class Study extends Component {
                   <tr>
                     <th style={{width: "80%"}}>
                       <div style={{display: "flex", justifyContent: "center"}}>
-                        <ScaleLoader color="blue" />
+                        <ScaleLoader color="#1ABC9C" />Uploading and viewing large files might take a few minutes. Please wait...
                       </div>
                     </th> 
                   </tr>) : (
@@ -265,13 +265,13 @@ class Study extends Component {
                     </th>
                     <th sm={6} className="table__item">
                       <div style={{display: "flex", alignItems: "center"}}>
-                        <div type="file" className="btn btn-primary" onClick={this.openFile}>
-                          <input type="file" style={{ display: "none" }} ref={(ele) => this.inputEle = ele} onChange={this.onFileSelected} />
+                        <div type="file" className="btn" style={{ backgroundColor:"#0E6655", color:"white"}} onClick={this.openFile}>
+                          <input type="file" style={{ display: "none", color:"#0E6655"}} ref={(ele) => this.inputEle = ele} onChange={this.onFileSelected} />
                             Select File
                         </div>
                         <div className="file__text">{fileName}</div>
                         <Button bsSize="large" bsStyle="link" onClick={this.submit} >
-                          <Glyphicon glyph="plus" style={{color:"#0E4D92"}}/>
+                          <Glyphicon glyph="plus" style={{color:"#0E6655"}}/>
                         </Button>
                       </div>
 

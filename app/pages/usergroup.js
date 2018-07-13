@@ -151,7 +151,7 @@ class Usergroup extends Component {
           }
         `}</style>
         
-        <h3 style={{color: "Black", width:"97.5%", float:"left"}}>
+        <h3 style={{color: "Black", width:"97.5%"}}>
             {gName.name}
             
             <Button style={{color: "Darkgreen", float:"right"}} onClick={this.handleShow}>User Management &nbsp;
@@ -258,17 +258,18 @@ class Usergroup extends Component {
         </div>
 
         {
-          studyLists && studyLists.map((study, index) => (
-            <Panel bsStyle="primary" style={{float: "left", width:"32%", marginRight:"10px"}} key={index} >
-            <Panel.Heading>
-              <Panel.Title componentClass="h3" >
+          studyLists && studyLists.map((study, index) => (<div>
+            <Panel style={{ width:"32%", marginRight:"10px"}} key={index} >
+            <Panel.Heading style={{backgroundColor:"#34495E", color:"white"}}>
+              <Panel.Title >
                 <Link href={`${groupid}/study/${study.id}`}>
-                      <a> {study.name} </a>
+                      <a> &nbsp; &nbsp; &nbsp;{study.name} </a>
                 </Link>
               </Panel.Title>
             </Panel.Heading>
-            <Panel.Body>{study.description}</Panel.Body>
+            <Panel.Body > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{study.description}</Panel.Body>
             </Panel>
+            </div>
           ))
         }
         <Panel bsStyle="success" style={{float:"left", overflow:"hidden", marginTop:"10px", width:"98%"}}>
