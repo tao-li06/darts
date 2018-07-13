@@ -263,11 +263,11 @@ class Usergroup extends Component {
             <Panel.Heading style={{backgroundColor:"#34495E", color:"white"}}>
               <Panel.Title >
                 <Link href={`${groupid}/study/${study.id}`}>
-                      <a> &nbsp; &nbsp; &nbsp;{study.name} </a>
+                      <a>{study.name} </a>
                 </Link>
               </Panel.Title>
             </Panel.Heading>
-            <Panel.Body > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{study.description}</Panel.Body>
+            <Panel.Body > {study.description}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</Panel.Body>
             </Panel>
             </div>
           ))
