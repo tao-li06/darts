@@ -299,7 +299,7 @@ export const updateUser = async(id, name, password, email, description, token = 
   {
     headers:{
       Authorization: token,
-      "Accept": "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       id,
@@ -307,7 +307,7 @@ export const updateUser = async(id, name, password, email, description, token = 
       password,
       email,
       description,
-      studyid
+      is_admin: false
     }),
     credentials: "include",
     method: "POST",
