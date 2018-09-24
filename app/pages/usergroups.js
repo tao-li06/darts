@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {  Glyphicon, FormControl, FormGroup, Panel} from 'react-bootstrap';
-import { addGroup, getUserGroupList} from '../service/darts';
+import { addGroup, getUserGroupList, updateUser} from '../service/darts';
 import withPage from './withPage';
 import { ScaleLoader} from 'react-spinners';
 import cookies from 'next-cookies';
@@ -10,21 +10,47 @@ const validate = (s, l) => s && s.length <= l;
 
 class Usergroups extends Component {
   static async getInitialProps(ctx) {
-    const { token } = cookies(ctx);
+    const { token, username, description, email, id, is_admin } = cookies(ctx);
     const { res } = ctx;
-   const userGroups = await getUserGroupList(token);
-   return { userGroups };
+    const userGroups = await getUserGroupList(token);
+    return { 
+        userGroups,
+        token, 
+        username, 
+        description,
+        email,
+        id,
+        is_admin
+    };
   }
 
   constructor(props) {
     super(props);
-    const{userGroups} = this.props;
+    const{userGroups, username, description, email, id, is_admin} = this.props;
     this.addUserGroup = this.addUserGroup.bind(this);
     this.state = { 
       adding: false,
       numOfGroups: userGroups.length,
-
+      show: false,
+      passwordChange : password,
+      emailChange: email,
+      descriptionChange: description,
+      confirmPassword: password
      };
+    this.handleShow = this.handleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.updateProfile = this.updateProfile.bind(this);
+  }
+
+  async updateProfile () {
+    const{ token, username, description,email, id, is_admin} = this.props;
+    const{ passwordChange, emailChange, descriptionChange, confirmPassword}  = this.state;
+    if(passwordChange == confirmPassword) {
+      const ok = await updateUser(id, name, passwordChange, emailChange, descriptionChange, token); 
+    } else window.alert("Password doesn't match");
+    if(res.ok) {
+      this.freshPage();
+    }
   }
 
   async addUserGroup() {
@@ -38,7 +64,12 @@ class Usergroups extends Component {
       }
     }
   }
-
+  handleShow() {
+    this.setState({ show: true });
+  }
+  handleClose() {
+    this.setState({ show: false });
+  }
 
   freshPage() {
     const url = window.location.href;
@@ -48,7 +79,7 @@ class Usergroups extends Component {
 
   render(){
     const { adding } = this.state;
-    const { userGroups } = this.props;
+    const { userGroups, username, description,email, id, is_admin } = this.props;
 
     return(
       <div className="container">
@@ -65,9 +96,87 @@ class Usergroups extends Component {
         `}</style>
         <h3 style={{color:"black", marginBottom:"20px"}}>
             &nbsp;&nbsp; List Of User Groups 
-            
+            <Button style={{color: "Darkblue", float:"right"}} onClick={this.handleShow}>My Profile &nbsp;
+              <Glyphicon  glyph="user"/>
+            </Button>
         </h3>
-
+        {<Modal show={this.state.show} onHide={this.handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>My Profile</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          <Table style={{alignItems: "center", float:"inline-end"}} striped bordered condensed hover>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Company</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+            {
+              <tr>
+                <td>{username}</td>
+                <td>{email}</td>
+                <td>{description}</td>
+                <th>&nbsp;</th>
+              </tr>
+            }
+            { 
+            <tr >
+                <td >
+                    <FormGroup style={{float: "left", width:"100%", marginLeft:"0px"}} >
+                      <FormControl 
+                      type="password"
+                      value={this.state.passwordChange}
+                      placeholder= "Change Password"
+                      onChange={(e) => this.setState({ passwordChange: e.target.value})}
+                    />
+                  </FormGroup>
+                </td>
+                <td >
+                    <FormGroup style={{float: "left", width:"100%", marginLeft:"0px"}} >
+                      <FormControl 
+                      type="password"
+                      value={this.state.confirmPassword}
+                      placeholder= "Confirm Password"
+                      onChange={(e) => this.setState({ confirmPassword: e.target.value})}
+                    />
+                  </FormGroup>
+                </td>
+                <td >
+                    <FormGroup style={{float: "left", width:"100%", marginLeft:"0px"}} >
+                      <FormControl 
+                      type="text"
+                      value={this.state.emailChange}
+                      placeholder= "Change email"
+                      onChange={(e) => this.setState({ emailChange: e.target.value})}
+                    />
+                  </FormGroup>
+                </td>
+                <td >
+                    <FormGroup style={{float: "left", width:"100%", marginLeft:"0px"}} >
+                      <FormControl 
+                      type="text"
+                      value={this.state.descriptionChange}
+                      placeholder= "Change description"
+                      onChange={(e) => this.setState({ descriptionChange: e.target.value})}
+                    />
+                  </FormGroup>
+                </td>
+                <td>
+                  <Button bsStyle="success" bsSize="small" style={{width:"80%", fontSize:"10pt"}} onClick={this.updateProfile}>Submit</Button>
+                </td>
+              </tr>}
+            </tbody>
+          </Table>
+            
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleClose}>Close</Button>
+          </Modal.Footer>
+        </Modal>}
 
         {adding && (
           <div style={{display: "flex", justifyContent: "center" }}>
