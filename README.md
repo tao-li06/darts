@@ -1,4 +1,4 @@
-# DARTS platform
+# DARTS Platform
 
 This project is implemented as www.darts-sci.com
 
@@ -19,3 +19,26 @@ Target identification using drug affinity responsive target stability (DARTS) PN
 2. Unbiased DARTS protocol:
 Drug Affinity Responsive Target Stability (DARTS) for Small Molecule Target Identification Methods Mol Biol(2016)
 
+# Contact Us
+Investors, Business, Collaborations:
+
+       Dr. Jing Huang
+
+       Professor, Department Of Molecular and Medical Pharmacology
+
+       Tel: (310) 825-4321
+
+       Address: CHS 23-231, 650 Charles E Young Dr S, Los Angeles, CA 90025
+
+       Email: jinghuang.ucla@gmail.com
+
+
+
+Technical Support
+
+
+       Xiang Yin
+
+       Tel: (310) 307-9215
+
+       Email: xiangyin701@gmail.com
