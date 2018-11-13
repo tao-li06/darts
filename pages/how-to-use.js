@@ -1,3 +1,3 @@
-import HowToUse from '../app/pages/howToUse';
+import HowToUse from '../app/pages/howtouse';
 
 export default HowToUse;
