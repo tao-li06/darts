@@ -10,6 +10,7 @@ class Register extends Component {
       invitationCode: "darts123"
     };
     this.onSubmit = this.onSubmit.bind(this);
+    this.isValid = this.isValid.bind(this);
   }
 
   async onSubmit() {
@@ -18,6 +19,11 @@ class Register extends Component {
     if(ok) {
         Router.push("/");
     }
+  }
+
+  async isValid() {
+    const { invalid } = this.state;
+    return invalid;
   }
 
   render(){
@@ -86,7 +92,7 @@ class Register extends Component {
                             marginBottom: "50px",
                             color:"white"
                       }}
-          onClick={this.onSubmit} className="login__submit" bsSize="large" bsStyle={invalid ? "success" : "error"}>Submit</Button>
+          onClick={this.onSubmit} className="login__submit" bsSize="large" bsStyle={"success" }>Submit</Button>
     </form>
     )
   }
