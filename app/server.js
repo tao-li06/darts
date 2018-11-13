@@ -14,7 +14,9 @@ const publicPath = [
   '/our-team/',
   '/our-team',
   '/contact-us',
-  '/contact-us/'
+  '/contact-us/',
+  '/how-to-use',
+  '/how-to-use/'
 
 ]
 
@@ -88,8 +90,8 @@ app.prepare().then(() => {
   });
 
 
-  server.get('/Introduction', (req, res) => {
-    return app.render(req, res, '/Introduction', {
+  server.get('/how-to-use', (req, res) => {
+    return app.render(req, res, '/how-to-use', {
       ...req.query,
     })
   });

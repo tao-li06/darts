@@ -31,7 +31,7 @@ const withLogin = (WrappedComponent) => {
     
     render() {
       return (
-        <div style={{backgroundColor:"#f2f2f2"}}>
+        <div style={{backgroundColor:"#171717"}}>
           
           <Navbar inverse>
             <Navbar.Header>
@@ -42,7 +42,7 @@ const withLogin = (WrappedComponent) => {
             </Navbar.Header>
             <Nav>
               <NavItem eventKey={6} href="/how-to-use" style={{color:"aliceblue"}}>
-              User Guide
+                User Guide
               </NavItem>
               <NavItem eventKey={1} href="/how-it-works" style={{color:"aliceblue"}}>
               The Principle of DARTS

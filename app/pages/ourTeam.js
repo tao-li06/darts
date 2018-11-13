@@ -21,57 +21,57 @@ class OurTeam extends Component {
       }
       </style>
       
-        <div style={{ color: "white" }}>
-            <PageHeader >Our Team</PageHeader>
+        <div style={{ color: "black" }}>
+            <PageHeader >About Jing Huang Lab 
+              </PageHeader>
             <div style={{ fontSize: "14pt", fontFamily:"helvetica neue"}}>
-            <header style={{ fontSize: "16pt"}}> JING HUANG, Ph.D.</header>
+            <header style={{ fontSize: "18pt"}}> Research Areas</header>
+            <br/>
+            <p> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. The target of rapamycin (TOR) signaling network: new interacting pathways, regulations, and drugs in cancer, aging and related areas (metabolic syndrome, neurodegenerative diseases, etc)
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Co-Founder, Chair of Scientific Advisory Board
+            </p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. Technology/method development: label-free small-molecule target identification, protein-ligand interaction, chemical genomics and proteomics, functional analysis
+            <p>
+            </p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. Molecular and cellular mechanisms of anti-cancer and anti-aging natural products (mainly focusing on mechanisms for cancer prevention, cardioprotection, neuroprotection and immune modulation)
+            <p>
+            </p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. New anti-aging mechanisms and therapeutic strategies
+            <p>
+            </p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5. Human variation, disease modifiers, and personalized drug discovery
+            </p>
+            <br/>
+            <header style={{ fontSize: "18pt"}}> Lab Members</header>
+            <br/>
+            <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Xiang Yin  Ph.D. student 
+            </p>
+            <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Min Chai  Ph.D. student 
             </p>
             <br/>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· Professor of Molecular and Medical Pharmacology at the David Geffen School of Medicine at UCLA
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Past members: 
             </p>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· Member of Jonsson Comprehensive Cancer Center at UCLA
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Brett Lomenick  Ph.D 
             </p>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· Founder of LongLifeRx Inc and DARTS Sciences Inc
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Xudong Fu  Ph.D
             </p>
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· Inventor of the DARTS (Drug Affinity Responsive Target Stability) technology.
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Melody Pai  Ph.D
             </p>
-            <br/>
+            <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Randall Chin  Ph.D
+            </p>
           </div>
         </div>
       <br/>
-      <div style={{ color: "#ededed" }}>
-          <div style={{ fontSize: "14pt", fontFamily:"helvetica neue"}}>
-            <header style={{ fontSize: "16pt"}}> BRETT LOMENICK, Ph.D.</header>
-            <p/>
-            <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Co-Founder, Chief Technology Officer
-            </p>
-            <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Spearheaded the development of the Drug Affinity Responsive Target Stability (DARTS) method for small molecule target identification.
-            </p>
-          </div>
-      </div>
-      <br/>
-      <br/>
-      <div style={{ color: "#ededed" }}>
-          <div style={{ fontSize: "14pt", fontFamily:"helvetica neue"}}>
-            <header style={{ fontSize: "16pt"}}> XIANG YIN</header>
-            <p/>
-            <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Co-Founder, 
-            </p>
-            <p>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </p>
-          </div>
-          <br/> <br/>
-      </div>
+      
+      
     
     </React.Fragment>
     )

@@ -40,6 +40,7 @@ const withPage = (WrappedComponen) => {
             <Navbar.Header>
               <Navbar.Brand >
                 <a className="navbar-brand"  href="/">DARTS Platform</a>
+                
               </Navbar.Brand>
             </Navbar.Header>
             <Nav bsStyle="pills">
@@ -48,8 +49,8 @@ const withPage = (WrappedComponen) => {
               </NavItem>
             </Nav>
             <Nav bsStyle="pills">
-              <NavItem eventKey={2} onClick={() => Router.push("/Introduction")}>
-                Introduction
+              <NavItem eventKey={2} onClick={() => Router.push("/how-to-use")}>
+                User Guide
               </NavItem>
             </Nav>
             <Nav pullRight>
