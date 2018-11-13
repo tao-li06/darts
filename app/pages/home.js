@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import withLogin from './withLogin';
+import withLoginHome from './withLoginHome';
 import Particles from 'react-particles-js';
 
 class Home extends Component {
@@ -12,4 +12,4 @@ class Home extends Component {
   }
 }
 
-export default withLogin(Home);
+export default withLoginHome(Home);
