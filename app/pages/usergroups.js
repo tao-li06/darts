@@ -32,10 +32,10 @@ class Usergroups extends Component {
       adding: false,
       numOfGroups: userGroups.length,
       show: false,
-      passwordChange : password,
+      // passwordChange : password,
       emailChange: email,
       descriptionChange: description,
-      confirmPassword: password
+      // confirmPassword: password
      };
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -43,14 +43,14 @@ class Usergroups extends Component {
   }
 
   async updateProfile () {
-    const{ token, username, description,email, id, is_admin} = this.props;
-    const{ passwordChange, emailChange, descriptionChange, confirmPassword}  = this.state;
-    if(passwordChange == confirmPassword) {
-      const ok = await updateUser(id, name, passwordChange, emailChange, descriptionChange, token); 
-    } else window.alert("Password doesn't match");
-    if(res.ok) {
-      this.freshPage();
-    }
+    // const{ token, username, description,email, id, is_admin} = this.props;
+    // const{ passwordChange, emailChange, descriptionChange, confirmPassword}  = this.state;
+    // if(passwordChange == confirmPassword) {
+    //   const ok = await updateUser(id, name, passwordChange, emailChange, descriptionChange, token); 
+    // } else window.alert("Password doesn't match");
+    // if(res.ok) {
+    //   this.freshPage();
+    // }
   }
 
   async addUserGroup() {

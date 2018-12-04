@@ -1,12 +1,12 @@
 const globalConfig = {
   development: {
     endpoints: {
-      darts: 'http://www.darts-sci.com',
+      darts: 'https://www.darts-sci.com',
     }
   },
   production: {
     endpoints: {
-      darts: 'http://www.darts-sci.com',
+      darts: 'https://www.darts-sci.com',
     }
   }
 }
